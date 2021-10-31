@@ -1,5 +1,12 @@
+import os
 from MedatechUK.odata import Load
 from MedatechUK.odata import oResponse
+from MedatechUK.mLog import mLog
+
+## Initialise logging
+log = mLog()
+log.start(os.path.dirname(__file__) , "debug")
+log.logger.info("Start")
 
 # Create the oData Loading
 l = Load(

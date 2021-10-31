@@ -14,23 +14,25 @@
 ## 
 ## request.Response.Flush()
 
-import os
-import sys
-import json
+import os , sys, json
 import importlib
 import urllib.parse as urlparse
-import xmltodict
-import dicttoxml
+import xmltodict , dicttoxml
 import pyodbc
 from MedatechUK.oDataConfig import Config
 import MedatechUK.odata
+from MedatechUK.mLog import mLog
 import inspect
+from datetime import datetime
 
 class Request:
 
     ## Ctor
     def __init__(self):
-            
+        
+        ## Register for log
+        self.log = mLog()            
+
         ## Set Request defaults
         self.method = os.environ['REQUEST_METHOD'] 
         self.content_type = "application/json"         
@@ -44,30 +46,34 @@ class Request:
                 
         try :  
             ## Generate the resonse object
+            self.log.logger.debug("Handling {} /{}.".format( self.method , self.endpoint ))
             self.Response = Response(self) 
             
             ## Locate the root folder
             previous_frame = inspect.currentframe().f_back
             (filename, line_number, function_name, lines, index) = inspect.getframeinfo(previous_frame)
             self.path = os.path.dirname(filename)
-
+                                   
             ## Split the endpoint into endpoint and extention
             #   where the endpoint contains a period
             if self.endpoint.find(".") > 0:                                      
                 self.ext = (self.endpoint.split(".")[-1]).lower()                 
                 self.endpoint = self.endpoint[0:len(self.endpoint)-(len(self.ext)+1)] 
             
-            ## Generate the config object
+            ## Generate the config object            
             self.config = Config(request=self)                         
 
         except Exception as e :
-            ## Set the status/message of the response on error            
+            ## Set the status/message of the response on error      
+            self.log.logger.critical("Bad config.")
+            self.log.logger.exception(e)
             self.Response.Status = 500
             self.Response.Message = "Internal Server Error"
             self.Response.data = {"error" : "Bad config: " + str(e)}
 
         if self.environment != "" and self.cont() :   
             ## Is it a valid environment?
+            self.log.logger.debug("Validating environment [{}].".format( self.environment ))
             try:
                 cnxn = pyodbc.connect("Driver={SQL Server Native Client 11.0};DATABASE=system;" + self.config.connstr )
                 crsr = cnxn.cursor() 
@@ -83,11 +89,13 @@ class Request:
                 
                 # Environment not found
                 if not f:
+                    self.log.logger.critical("Bad environment [{}].".format( self.environment ))
                     self.Response.Status = 400
                     self.Response.Message = "Invalid company."
                     self.Response.data = {"error" : "Company [" + self.environment + "] not found."}   
 
             except Exception as e:
+                self.log.logger.critical("dberror in {}: {}.".format( self.endpoint + '.' + self.ext , str(e) ))
                 self.Response.Status = 500
                 self.Response.Message = "Internal Server Error"
                 self.Response.data = {"error" : self.endpoint + '.' + self.ext + " threw an exception.", "dberror" : str(e)}  
@@ -104,18 +112,17 @@ class Request:
             else:
                 # Default
                 self.content_type = "application/json"  
+            self.log.logger.debug("GET Content type: [{}].".format( self.content_type ))
 
             ##  Import a script to handler the request
             #   Check file exists
             if os.path.isfile(self.endpoint + ".py"):
-                # Import the handler
-                handler = importlib.import_module(self.endpoint)
-                # Process the request with the loaded handler
-                handler.ProcessRequest(self)
+                self.Inject()
             
             ## Load from database
             elif self.environment !="" :
                 try:
+                    self.log.logger.debug("Opening DB query: [{}] in [{}].".format( self.endpoint , self.environment ))
                     cnxn = pyodbc.connect("Driver={SQL Server Native Client 11.0};DATABASE="+ self.environment +";" + self.config.connstr )
                     crsr = cnxn.cursor() 
 
@@ -159,31 +166,44 @@ class Request:
                     self.Response.data = xmltodict.parse(row[0])                
                 
                 except Exception as e:
+                    self.log.logger.critical("Database error.")
+                    self.log.logger.exception(e)
                     self.Response.Status = 404
                     self.Response.Message = "Not found."
                     self.Response.data = {"error" : self.endpoint + '.' + self.ext + " not found.", "dberror" : str(e)}                       
             else:
+                self.log.logger.critical("Handler not found: [{}].".format( self.endpoint + ".py" ))
                 self.Response.Status = 404
-                self.Response.Message = "Not found. here"
+                self.Response.Message = "Not found."
                 self.Response.data = {"error" : self.endpoint + '.' + self.ext + " not found.", "dberror" : str(e)} 
                 
         ##  Set the Content-Type of the request
         #   for POST            
-        elif self.method == "POST" and self.cont() :                                        
+        elif self.method == "POST" and self.cont() :               
+
             #   Set the response content type based on request content type
             self.content_Length = int(os.environ.get('CONTENT_LENGTH', '0'))             
             if self.content_Length > 0 :
-                self.content_type = os.environ['HTTP_CONTENT_TYPE']                             
+                self.content_type = os.environ['HTTP_CONTENT_TYPE']  
+
+            else:
+                self.log.logger.critical("Bad request: [Missing Content].")
+                self.content_type = "application/json"     
+                self.Response.Status = 400
+                self.Response.Message = "Bad Request"
+                self.Response.data = {"error" : "No data in request"}   
 
             #   Check for valid content type
-            if self.content_type != "application/xml" and self.content_type != "application/json" :           
+            if self.content_type != "application/xml" and self.content_type != "application/json" :
+                self.log.logger.critical("Bad request: [Invalid Content type].")
                 self.content_type = "application/json"     
                 self.Response.Status = 400
                 self.Response.Message = "Bad Request"
                 self.Response.data = {"error" : "Invalid Content type. Use application/xml or application/json"}            
-                        
+                            
             ##  Deserialise to self.data if no previous error
-            if self.cont() :                  
+            if self.cont() :
+                self.log.logger.debug("Deserialising Content type: [{}].".format( self.content_type ))
                 try:                    
                     if self.content_Length > 0:
                         cl = self.content_Length
@@ -209,6 +229,7 @@ class Request:
 
                 except Exception as e:                    
                     # Invalid data
+                    self.log.logger.critical("Bad request: [Invalid data].".format( str(e) ))
                     self.Response.Status = 400
                     self.Response.Message = "Invalid POST"
                     self.Response.data = {"error" : str(e)}
@@ -216,20 +237,12 @@ class Request:
             ##  Inject a handler for the request
             #   if the handler exists.
             if self.cont() and os.path.isfile(self.endpoint + ".py"):
-                try:
-                    # Import the handler
-                    handler = importlib.import_module(self.endpoint)
-                    # Process the request with the loaded handler
-                    handler.ProcessRequest(self)
-
-                except Exception as e :
-                    self.Response.Status = 500
-                    self.Response.Message = "Injection Failure"
-                    self.Response.data = {"error" : str(e), "handler": self.endpoint}
+                self.Inject()
 
             elif self.cont() :
                 try:                                
-                    if self.content_Length > 0:                                                                      
+                    if self.content_Length > 0:   
+                        self.log.logger.debug("POST [{}] loading with config [{}].".format( self.ext.upper() , self.endpoint + '.' + self.serialtype + ".config" ))                                                                         
                         # Create the oData Loading
                         l = MedatechUK.odata.Load(
                             # Load type is the endpoint extention
@@ -239,13 +252,38 @@ class Request:
                             # Pass this request for settings
                             request = self
                         )
+
                         ## POST the oData to Priority
                         l.post(self.Response)   
+                        self.log.logger.debug("POST OK")
 
                 except Exception as e :
+                    self.log.logger.exception(e)
                     self.Response.Status = 500
                     self.Response.Message = "Load Fail"
                     self.Response.data = {"error" : str(e)}
+
+    def Inject(self):
+        handler = {}
+        try:
+            # Import the handler
+            self.log.logger.debug("Injecting handler: [{}].".format( self.endpoint + ".py" ))            
+            handler = importlib.import_module(self.endpoint)
+
+        except Exception as e :
+            self.log.logger.critical("Injection Failure [{}]: {}.".format( self.endpoint + '.' + self.ext , str(e) ))
+            self.Response.Status = 500
+            self.Response.Message = "Injection Failure"
+            self.Response.data = {"error" : str(e), "handler": self.endpoint}
+
+        try:
+            # Process the request with the loaded handler
+            handler.ProcessRequest(self)
+
+        except Exception as e :                        
+            self.Response.Status = 500
+            self.Response.Message = "Handler error"
+            self.Response.data = {"handler": self.endpoint + '.' + self.ext , "error" : str(e)}
 
     # Get params from the query String
     def query(self, name , default):
@@ -258,19 +296,27 @@ class Request:
                     ret += urlparse.parse_qs(os.environ["QUERY_STRING"])[k][i-1]
                     
         if len(ret) > 0:
+            self.log.logger.debug("URL Query: ?{}={}".format(name , ret))
             return ret
         else:
+            self.log.logger.warn("URL Query: ?{}=null. default={}".format(name , default))
             return default  
 
     # Returns true is the response status is 2**
     def cont(self):
-        return (self.Response.Status >= 200 and self.Response.Status <= 299)
+        ret = (self.Response.Status >= 200 and self.Response.Status <= 299)
+        #if ret:
+        #    self.log.logger.debug("[{}] Continue.".format( self.Response.Status ))        
+        return ret
 
 class Response:
 
     ## Ctor
     def __init__(self, Request):
-          
+        
+        ## Register for log
+        self.log = mLog()   
+
         self.request = Request
         self.Status = 200         
         self.Message = "OK"                          
@@ -279,8 +325,11 @@ class Response:
     ## Flush method: Send response to the client
     def Flush(self):        
 
+        self.log.logger.debug("Flushing response.")
+
         ## redirecting?
         if self.Status == 302:
+            self.log.logger.debug("Redirecting response to [{}].".format( self.Message ))
             print("HTTP/1.1 {} Found".format(str(self.Status)))
             print("Location: {}".format(self.Message))
             print("")
@@ -288,21 +337,19 @@ class Response:
         else:
             ## Write Headers        
             self.ContentHeader()
+            self.log.logger.debug("Write [{}] response.".format( self.request.content_type ))             
 
             ## Write self.data to the response
             if self.request.content_type=="application/xml" :
-                ## In XML                
+                ## In XML                   
                 print(dicttoxml.dicttoxml(self.data).decode('utf-8'))
 
             else :
                 ## In JSON
                 print(json.dumps(self.data, indent=4))
 
-        ## Write URL re-write data if debug = 1       
-        if self.request.query("debug", "0") == "1":
-            self.ContentHeader()
-
     def redirect(self, url):
+        ## Set redirect
         self.Status = 302
         self.Message = url
 

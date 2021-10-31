@@ -13,16 +13,19 @@
 #    opass ="123456"
 #    Environment = "wlnd"
 
-import os
-import json
+import os, json
 import xmltodict
 import inspect
+from MedatechUK.mLog import mLog
 
 class Config:
     
     ## Ctor
     def __init__(self, **kwargs): 
 
+        ## Register for log
+        self.log = mLog()    
+        
         ## Init Vars
         self.config = {}
         self.oDataHost = ''
@@ -47,6 +50,7 @@ class Config:
                 elif os.path.isfile(self.path + "\constants.py"):
                     self.SettingfromConstants()
                 else:
+                    self.log.logger.critical("No settings found in [{}].".format( self.path ))
                     raise
 
             ## If there's no request (i.e. not a web integration) 
@@ -60,11 +64,13 @@ class Config:
                 elif os.path.isfile(self.path + "\web.config"):
                     self.SettingfromWebConfig()
                 else:
+                    self.log.logger.critical("No settings found in [{}].".format( self.path ))
                     raise
 
     ## Load setting from the IIS web.config                    
     def SettingfromWebConfig(self):
         ## Load the config file
+        self.log.logger.debug("Opening [{}].".format( self.path + '\web.config' ))
         with open(self.path + '\web.config') as fd:  
             self.config = xmltodict.parse(fd.read(), process_namespaces=True)    
 
@@ -91,6 +97,7 @@ class Config:
     ## Load settings from file constanst.py
     def SettingfromConstants(self):                
         ## Load the constants file
+        self.log.logger.debug("Opening [{}].".format( self.path + '\constants.py' ))
         Lines = {}
         with open(self.path + '\constants.py') as fd:  
             Lines = fd.readlines()

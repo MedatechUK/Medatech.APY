@@ -38,6 +38,7 @@ from http.client import HTTPSConnection
 from base64 import b64encode
 import inspect
 
+from MedatechUK.mLog import mLog
 from MedatechUK.oDataConfig import Config
 import MedatechUK.PriDate
 
@@ -126,6 +127,8 @@ class Load:
     ## Ctor
     def __init__(self, **kwargs): 
         
+        self.log = mLog()    
+
         ## Set Default Property values       
         self.line = 1
         self.records = [] ## Holds Record type data        
@@ -141,19 +144,12 @@ class Load:
         ## Determine data source
         for arg in kwargs.keys():
 
-            ## The excluded namespaces / columns
-            if arg =='ex' :
-                self.ex = kwargs[arg]
-
             ## Data from request
-            if arg == 'request' :                  
-                ## print("Opening from [{}] Request to [{}] ...".format(kwargs[arg].content_type , kwargs[arg].endpoint))
-                try:                                               
-                    # print(kwargs[arg].config.ouser)
-                    #print(kwargs[arg].data)
+            if arg.lower() == 'request' :   
+                self.log.logger.debug("Opening [{}] Request for [{}] ...".format(kwargs[arg].content_type , kwargs[arg].endpoint))                
+                try:                                                                   
                     self.path = kwargs[arg].path
-                    self.json = json.loads(json.dumps(kwargs[arg].data), object_hook=lambda d: SimpleNamespace(**d))    
-                    #print(self.json)                                                        
+                    self.json = json.loads(json.dumps(kwargs[arg].data), object_hook=lambda d: SimpleNamespace(**d))                                                     
                     self.oDataHost = kwargs[arg].config.oDataHost
                     self.url = '/odata/priority/{}/{}/ZODA_TRANS'.format(kwargs[arg].config.tabulaini , kwargs[arg].config.environment)
                     self.headers = { 
@@ -162,18 +158,21 @@ class Load:
                         "User-Agent": "MedatechUK Python Client",
                     }
 
-                except Exception as e :                        
+                except Exception as e :     
+                    self.log.logger.exception(e)                   
                     kwargs[arg].Response.Status = 500
                     kwargs[arg].Response.Message = "Bad Config: " + str(e)
 
             ## The environment is specified
-            if arg == 'env' : 
-                
+            if arg.lower() == 'env' :           
+                self.log.logger.debug("Setting environment [{}]...".format(kwargs[arg] )) 
+
                 ## Locate the root folder
                 previous_frame = inspect.currentframe().f_back
                 (filename, line_number, function_name, lines, index) = inspect.getframeinfo(previous_frame)
-                self.path = path=os.path.dirname(filename)
-                c = Config(env=kwargs[arg],path=self.path)               
+                self.path = os.path.dirname(filename)           
+
+                c = Config(env=kwargs[arg] , path=self.path)               
                 self.oDataHost = c.oDataHost
                 self.url = '/odata/priority/{}/{}/ZODA_TRANS'.format(c.tabulaini , c.environment)
                 self.headers = { 
@@ -182,29 +181,38 @@ class Load:
                     "User-Agent": "MedatechUK Python Client",
                 }  
         
+        self.log.logger.debug("Running in [{}]...".format( self.path )) 
         for arg in kwargs.keys():
+
+            ## The excluded namespaces / columns
+            if arg.lower() =='ex' :
+                self.ex = kwargs[arg]      
+
             ## Data from file
-            if arg == 'f' :                 
+            if arg.lower() == 'f' :                 
                 try:
-                    # print("Opening from file: [{}] ... ".format(kwargs[arg]))
+                    self.log.logger.debug("Opening from file: [{}] ... ".format(kwargs[arg]))
                     with open(self.path + "\\" + kwargs[arg], "r") as o:   
                         self.json = json.loads(o.read(), object_hook=lambda d: SimpleNamespace(**d)) 
 
-                except Exception as e :                        
+                except Exception as e :       
+                    self.log.logger.exception(e)                 
                     kwargs[arg].Response.Status = 500
                     kwargs[arg].Response.Message = "Bad Config: " + str(e)
 
             ## Data from object
-            if arg == 'o' :  
+            if arg.lower() == 'o' :  
                 try:               
-                    # print("Opening from object ... ")
+                    self.log.logger.debug("Opening from object ... ")
                     self.json = json.loads(kwargs[arg].read(), object_hook=lambda d: SimpleNamespace(**d))    
 
-                except Exception as e :                        
+                except Exception as e : 
+                    self.log.logger.exception(e)
                     kwargs[arg].Response.Status = 500
                     kwargs[arg].Response.Message = "Bad Config: " + str(e)
 
-        ## Recurse through data to create config        
+        ## Recurse through data to create config
+        self.log.logger.debug("Make loading config.")
         self.makeConfig(self.json, 'root')           
         
         ## Write config (if missing)
@@ -214,7 +222,8 @@ class Load:
         with open(self.path + "\\" + kwargs['c'], "r") as f:            
             self.config = json.loads(f.read(), object_hook=lambda d: SimpleNamespace(**d))   
                 
-        ## print("Parsing object ... ")        
+        ## print("Parsing object ... ")  
+        self.log.logger.debug("Parsing loading.")      
         self.parse(self.json, 'root')
         
         ## Build POST request body
@@ -264,8 +273,7 @@ class Load:
                         return oProp(dest , v)
 
     ## Recurse json to create config data
-    def makeConfig(self, x, path): 
-        #print(x)       
+    def makeConfig(self, x, path):            
         rt = []    
         try:
             for property, value in vars(x).items():  
@@ -300,8 +308,8 @@ class Load:
                             if th not in rt:
                                 rt.append(th)                                           
                             self.makeConfig(i, th) 
-        except Exception as e:
-            #print(x)
+        
+        except Exception as e:            
             self.Add(path).props.append(Prop("TEXT1" , type("TEXT1"), self.Add(path)))   
 
     ## Write the config file
@@ -393,17 +401,17 @@ class Load:
             
     ## Save the odata to a file
     def save(self , fn):
-        ## print("Saving to [{}] ... ".format(fn))
+        self.log.logger.debug("Saving to [{}] ... ".format(fn))
         with open(fn, 'w') as f:
             json.dump(self.data, f)            
 
     ## Post to Priority
     def post(self, Response):
-        ## print("POSTing to [{}] ... ".format(self.oDataHost))
-        c = HTTPSConnection(self.oDataHost)   
-        # print(self.url) 
-        # print(self.headers)     
-        # print(self.data)     
+        self.log.logger.debug("POSTing to [{}{}] ".format( self.oDataHost , self.url ))                 
+        self.log.logger.debug("Headers:\n{}".format( json.dumps(self.headers ,  indent = 4) ))
+        self.log.logger.debug("Data:\n{}".format( json.dumps(self.data, indent = 4) ))
+        
+        c = HTTPSConnection(self.oDataHost)  
         c.request( 
             'POST', 
             self.url , 
@@ -412,40 +420,54 @@ class Load:
         )
         res = c.getresponse()            
         if res.status == 201: # Created
+            self.log.logger.debug("[{}] OK".format( res.status ))
             data = json.loads(res.read())             
-            # print("PATCHing to [{}] ... ".format(self.oDataHost))                    
+
             c.request( 
                 'PATCH', 
                 self.url + "(BUBBLEID='"+ data['BUBBLEID'] + "',LOADTYPE=" + str(data['LOADTYPE']) + ")", 
                 headers=self.headers, 
                 body=json.dumps(self.patch) 
             )
+            
+            self.log.logger.debug("PATCHing to [{}] ... ".format( self.url + "(BUBBLEID='"+ data['BUBBLEID'] + "',LOADTYPE=" + str(data['LOADTYPE']) + ")" ))  
             res = c.getresponse()
+
             if res.status != 200: # PATCHed
+                self.log.logger.critical("[{}] Fail: {}".format( res.status , res.reason ))
                 Response.Status = res.status   
                 Response.Message = "PATCH Failed: " + res.reason  
                 # If the response is text, create a response with the text
                 if res.getheader("Content-Type","").find("text/plain") > -1:                             
-                    Response.data = {"error": str(res.read().decode('utf-8')) }                
+                    er = str(res.read().decode('utf-8'))
+                    Response.data = {"error": er }     
+                    self.log.logger.critical("{}".format( er ))
+
                 else: # Create reponse from json 
                     Response.data = json.load(res)
 
             else:
                 ## Sucsess!
-                Response.Status = 200
-                Response.Message = "OK"
+                self.log.logger.debug("[{}] {}".format( res.status , res.reason ))
+                Response.Status = res.status
+                Response.Message = res.reason
                 Response.data = json.load(res)
 
         else:   
             Response.Status = res.status
             Response.Message = "POST Failed: " + res.reason   
+            self.log.logger.critical("[{}] Fail: {}".format( res.status , res.reason ))
+
             # If the response is text, create a response with the text         
             if res.getheader("Content-Type","").find("text/plain") > -1:                             
-                Response.data = {"error": str(res.read().decode('utf-8')) }
+                er = str(res.read().decode('utf-8'))
+                Response.data = {"error": er }     
+                self.log.logger.critical("{}".format( er ))
 
             else: # Create reponse from json 
                 Response.data = json.load(res)   
 
+## Response structure used for non request calls
 class oResponse:
 
     ## Ctor
