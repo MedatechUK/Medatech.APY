@@ -310,6 +310,7 @@ class SerialBase :
                 ret.Status = res.status
                 ret.Message = res.reason
                 ret.data = json.load(res)
+                self.log.logger.debug("Result: {}".format( json.dumps(ret.data  , indent = 4 ) ))
 
         else:   
             ret.Status = res.status

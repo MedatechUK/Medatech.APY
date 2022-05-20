@@ -39,9 +39,9 @@ class mLog():
         tree.append(os.path.basename(filename.filename))
 
         previous_frame = previous_frame.f_back        
-        while previous_frame:
+        while previous_frame and os.path.basename(filename.filename)!='runpy.py':
             (filename) = inspect.getframeinfo(previous_frame)        
-            if os.path.basename(filename.filename) != tree[-1]:
+            if os.path.basename(filename.filename) != tree[-1] and os.path.basename(filename.filename)!='runpy.py':
                 tree.append(os.path.basename(filename.filename))
             previous_frame = previous_frame.f_back
         
