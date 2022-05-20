@@ -21,7 +21,7 @@ import urllib.parse as urlparse
 import xmltodict , dicttoxml
 import pyodbc
 from MedatechUK.oDataConfig import Config
-import MedatechUK.odata
+import MedatechUK.apy
 from MedatechUK.mLog import mLog
 import inspect
 from datetime import datetime
@@ -29,48 +29,71 @@ from datetime import datetime
 class Request:
 
     ## Ctor
-    def __init__(self):
+    def __init__(self, **kwargs):
         
         ## Register for log
-        self.log = mLog()            
-
-        ## Set Request defaults
-        self.method = os.environ['REQUEST_METHOD'] 
+        self.log = mLog()
+        
+        ## Set Request defaults   
         self.content_type = "application/json"         
-        self.content_length = 0
-        self.environment = self.query("environment","")
-        self.endpoint = self.query("endpoint", "default.json")                                         
+        self.content_length = 0                  
         self.ext = "json"
         self.data = {}                                                     
         self.config = {}
-        self.serialtype = 'json'
-                
-        try :  
-            ## Generate the resonse object
-            self.log.logger.debug("Handling {} /{}.".format( self.method , self.endpoint ))
-            self.Response = Response(self) 
+        self.serialtype = 'json'          
+
+        try:            
+            if kwargs.__contains__("method"):
+                self.method = kwargs["method"]
+            else:
+                self.method = os.environ["REQUEST_METHOD"] 
+
+            if kwargs.__contains__("environment"):
+                self.environment = kwargs["environment"]
+            else:
+                self.environment = self.query("environment","")
+
+            if kwargs.__contains__("endpoint"):
+                self.endpoint = kwargs["endpoint"]
+            else:
+                self.endpoint = self.query("endpoint", "")   
             
-            ## Locate the root folder
-            previous_frame = inspect.currentframe().f_back
-            (filename, line_number, function_name, lines, index) = inspect.getframeinfo(previous_frame)
-            self.path = os.path.dirname(filename)
-                                   
-            ## Split the endpoint into endpoint and extention
-            #   where the endpoint contains a period
-            if self.endpoint.find(".") > 0:                                      
-                self.ext = (self.endpoint.split(".")[-1]).lower()                 
-                self.endpoint = self.endpoint[0:len(self.endpoint)-(len(self.ext)+1)] 
-            
-            ## Generate the config object            
-            self.config = Config(request=self)                         
+            self.response = Response(request=self) 
 
         except Exception as e :
             ## Set the status/message of the response on error      
-            self.log.logger.critical("Bad config.")
+            self.log.logger.critical("Bad request.")
             self.log.logger.exception(e)
-            self.Response.Status = 500
+            self.Response.Status = 400
             self.Response.Message = "Internal Server Error"
             self.Response.data = {"error" : "Bad config: " + str(e)}
+
+        if self.cont() : 
+            try :  
+                ## Generate the resonse object
+                self.log.logger.debug("Handling {} /{}.".format( self.method , self.endpoint ))                
+                
+                ## Locate the root folder
+                previous_frame = inspect.currentframe().f_back
+                (filename, line_number, function_name, lines, index) = inspect.getframeinfo(previous_frame)
+                self.path = os.path.dirname(filename)
+                                    
+                ## Split the endpoint into endpoint and extention
+                #   where the endpoint contains a period
+                if self.endpoint.find(".") > 0:                                      
+                    self.ext = (self.endpoint.split(".")[-1]).lower()                 
+                    self.endpoint = self.endpoint[0:len(self.endpoint)-(len(self.ext)+1)] 
+                
+                ## Generate the config object            
+                self.config = Config(request=self)                         
+
+            except Exception as e :
+                ## Set the status/message of the response on error      
+                self.log.logger.critical("Bad config.")
+                self.log.logger.exception(e)
+                self.Response.Status = 500
+                self.Response.Message = "Internal Server Error"
+                self.Response.data = {"error" : "Bad config: " + str(e)}
 
         if self.environment != "" and self.cont() :   
             ## Is it a valid environment?
@@ -180,33 +203,29 @@ class Request:
                 
         ##  Set the Content-Type of the request
         #   for POST            
-        elif self.method == "POST" and self.cont() :               
-
-            #   Set the response content type based on request content type
-            self.content_Length = int(os.environ.get('CONTENT_LENGTH', '0'))             
-            if self.content_Length > 0 :
-                self.content_type = os.environ['HTTP_CONTENT_TYPE']  
-
-            else:
-                self.log.logger.critical("Bad request: [Missing Content].")
+        elif self.method == "POST" and self.cont():
+            if not os.path.isfile(self.endpoint + ".py"):
+                self.log.logger.critical("handler not found.")
                 self.content_type = "application/json"     
-                self.Response.Status = 400
-                self.Response.Message = "Bad Request"
-                self.Response.data = {"error" : "No data in request"}   
+                self.Response.Status = 404
+                self.Response.Message = "handler not found."
+                self.Response.data = {"error" : "handler not found"} 
 
-            #   Check for valid content type
-            if self.content_type != "application/xml" and self.content_type != "application/json" :
-                self.log.logger.critical("Bad request: [Invalid Content type].")
-                self.content_type = "application/json"     
-                self.Response.Status = 400
-                self.Response.Message = "Bad Request"
-                self.Response.data = {"error" : "Invalid Content type. Use application/xml or application/json"}            
-                            
-            ##  Deserialise to self.data if no previous error
-            if self.cont() :
-                self.log.logger.debug("Deserialising Content type: [{}].".format( self.content_type ))
-                try:                    
-                    if self.content_Length > 0:
+            if self.cont():
+                #   Set the response content type based on request content type
+                if kwargs.__contains__("data"):
+                    if kwargs.__contains__("content_type"):
+                         self.content_type = kwargs["content_type"]
+                    data = json.dumps(kwargs["data"])
+                else:
+                    try:
+                        self.content_Length = int(os.environ.get('CONTENT_LENGTH', '0'))      
+                    except:
+                        self.content_Length = 0
+
+                    if self.content_Length > 0 :                        
+                        self.content_type = os.environ['HTTP_CONTENT_TYPE']  
+
                         cl = self.content_Length
                         data = "" # sys.stdin.read(content_Length)   ## Easier, didn't work                 
                         while cl > 0:
@@ -218,8 +237,27 @@ class Request:
                                 #  BUT stdin reads BOTH characters as a single char
                                 #  causing a buffer overrun.
                                 #  This removes the extra characters.
-                                cl += -1                        
+                                cl += -1  
 
+                    else:
+                        self.log.logger.critical("Bad request: [Missing Content].")
+                        self.content_type = "application/json"     
+                        self.Response.Status = 400
+                        self.Response.Message = "Bad Request"
+                        self.Response.data = {"error" : "No data in request"}   
+
+                    #   Check for valid content type
+                    if self.content_type != "application/xml" and self.content_type != "application/json" :
+                        self.log.logger.critical("Bad request: [Invalid Content type].")
+                        self.content_type = "application/json"     
+                        self.Response.Status = 400
+                        self.Response.Message = "Bad Request"
+                        self.Response.data = {"error" : "Invalid Content type. Use application/xml or application/json"}            
+                                    
+                ##  Deserialise to self.data if no previous error
+                if self.cont() :
+                    self.log.logger.debug("Deserialising Content type: [{}].".format( self.content_type ))
+                    try:                                          
                         if self.content_type=="application/json" :          
                             self.data = json.loads(data)
                             self.serialtype = 'json'
@@ -228,41 +266,17 @@ class Request:
                             self.data = xmltodict.parse(data)
                             self.serialtype = 'xml'
 
-                except Exception as e:                    
-                    # Invalid data
-                    self.log.logger.critical("Bad request: [Invalid data].".format( str(e) ))
-                    self.Response.Status = 400
-                    self.Response.Message = "Invalid POST"
-                    self.Response.data = {"error" : str(e)}
-                
-            ##  Inject a handler for the request
-            #   if the handler exists.
-            if self.cont() and os.path.isfile(self.endpoint + ".py"):
-                self.Inject()
-
-            elif self.cont() :
-                try:                                
-                    if self.content_Length > 0:   
-                        self.log.logger.debug("POST [{}] loading with config [{}].".format( self.ext.upper() , self.endpoint + '.' + self.serialtype + ".config" ))                                                                         
-                        # Create the oData Loading
-                        l = MedatechUK.odata.Load(
-                            # Load type is the endpoint extention
-                            ltype = self.ext.upper(),
-                            # Config file is the name of the endpoint
-                            c = self.endpoint + '.' + self.serialtype + ".config",
-                            # Pass this request for settings
-                            request = self
-                        )
-
-                        ## POST the oData to Priority
-                        l.post(self.Response)   
-                        self.log.logger.debug("POST OK")
-
-                except Exception as e :
-                    self.log.logger.exception(e)
-                    self.Response.Status = 500
-                    self.Response.Message = "Load Fail"
-                    self.Response.data = {"error" : str(e)}
+                    except Exception as e:                    
+                        # Invalid data
+                        self.log.logger.critical("Bad request: [Invalid data].".format( str(e) ))
+                        self.Response.Status = 400
+                        self.Response.Message = "Invalid POST"
+                        self.Response.data = {"error" : str(e)}
+                    
+                ##  Inject a handler for the request
+                #   if the handler exists.
+                if self.cont():
+                    self.Inject()
 
     def Inject(self):
         handler = {}
@@ -305,7 +319,7 @@ class Request:
 
     # Returns true is the response status is 2**
     def cont(self):
-        ret = (self.Response.Status >= 200 and self.Response.Status <= 299)
+        ret = (self.response.Status >= 200 and self.response.Status <= 299)
         #if ret:
         #    self.log.logger.debug("[{}] Continue.".format( self.Response.Status ))        
         return ret
@@ -313,12 +327,15 @@ class Request:
 class Response:
 
     ## Ctor
-    def __init__(self, Request):
+    def __init__(self, **kwargs):
         
         ## Register for log
         self.log = mLog()   
 
-        self.request = Request
+        if kwargs.__contains__("request"):
+            self.request = kwargs["request"]
+            self.request.response = self
+
         self.Status = 200         
         self.Message = "OK"                          
         self.data = {}

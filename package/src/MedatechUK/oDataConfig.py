@@ -35,7 +35,7 @@ class Config:
         self.opass = '' 
         self.path = ""       
         self.connstr = 'Server=localhost\PRI,1433;Trusted_Connection=Yes;MultipleActiveResultSets=true;'  
-
+        
         ## Set the environment (Priority Company)
         self.environment = ""
         for arg in kwargs.keys():
