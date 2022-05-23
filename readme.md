@@ -1,5 +1,11 @@
 # Python API
 
+## Install
+To install this package use
+```
+pip install MedatechUK.APY
+```
+
 ## Imports
 
 ```python
@@ -163,7 +169,7 @@ class orderitems(SerialBase) :
 ```
 
 ## Usage as a web handler
-```
+```python
 def ProcessRequest(request) :
     try:
         q = order(**request.data)        
@@ -189,11 +195,10 @@ def ProcessRequest(request) :
                 "line": exc_tb.tb_lineno
             }
         } 
-fsa
 ```
 
 ## Output
-```
+``` json
 200: OK
 {
     "@odata.context": "https: //walrus.ntsa.uk/odata/Priority/tabula.ini/wlnd/$metadata#ZODA_TRANS/$entity",
