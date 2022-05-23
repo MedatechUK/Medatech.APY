@@ -262,9 +262,12 @@ class Request:
                             self.data = json.loads(data)
                             self.serialtype = 'json'
 
-                        if self.content_type=="application/xml" :                         
-                            self.data = xmltodict.parse(data)
+                        if self.content_type=="application/xml" : 
+                            t = xmltodict.parse(data)
+                            self.data = json.loads(json.dumps(t[list(t)[0]]))
                             self.serialtype = 'xml'
+
+                        self.log.logger.info("Received [{}]: {}".format(self.serialtype , json.dumps(self.data, sort_keys=False, indent=4)))
 
                     except Exception as e:                    
                         # Invalid data
@@ -293,9 +296,11 @@ class Request:
 
         try:
             # Process the request with the loaded handler
+            self.log.logger.debug("Running ProcessRequest method in: [{}].".format( self.endpoint + ".py" ))   
             handler.ProcessRequest(self)
 
-        except Exception as e :                        
+        except Exception as e :      
+            self.log.logger.critical("Injection Failure [{}]: {}.".format( self.endpoint + '.' + self.ext , str(e) ))                  
             self.Response.Status = 500
             self.Response.Message = "Handler error"
             self.Response.data = {"handler": self.endpoint + '.' + self.ext , "error" : str(e)}
