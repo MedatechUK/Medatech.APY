@@ -1,4 +1,5 @@
 import json , uuid , os , sys
+import xmltodict , dicttoxml
 from MedatechUK.Serial import SerialBase , SerialT , SerialF
 from MedatechUK.mLog import mLog
 from MedatechUK.apy import Response
@@ -103,8 +104,9 @@ class orderitems(SerialBase) :
     #endregion
 
 def ProcessRequest(request) :
+    log = mLog()
     try:
-        q = order(**request.data)        
+        q = order(**request.data)            
         q.toPri(
             Config(
                 env=request.environment , 
@@ -115,6 +117,7 @@ def ProcessRequest(request) :
         )        
     
     except Exception as e:
+        log.logger.critical(str(e))
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]        
         request.Status = 500
@@ -152,36 +155,45 @@ if __name__ == '__main__':
 
     #endregion
 
-    #region "Load Order from file"
-    log.logger.debug("Opening {}".format('test.json'))    
-    with open('test.json', 'r') as the_file:
-        q = order(**json.loads(the_file.read()))
+    #region "Load Order from xml file"
+    #log.logger.debug("Opening {}".format('test.xml'))    
+    with open('test.xml', 'r') as the_file:
+        t= xmltodict.parse(the_file.read())
+        q = order(**json.loads(json.dumps(t[list(t)[0]])))
+    
+    #endregion
+    
+    #region "Load Order from json file"
+    #log.logger.debug("Opening {}".format('test.json'))    
+    #with open('test.json', 'r') as the_file:
+    #    q = order(**json.loads(the_file.read()))
 
-        # Output as json
-        #print(q.toJSON())
+    # Output as json
+    #print(q.toJSON())
 
-        # Output as nested oData Commands
-        #print(json.dumps(json.loads(q.toOdata()), sort_keys=False, indent=4))
+    # Output as nested oData Commands
+    #print(json.dumps(json.loads(q.toOdata()), sort_keys=False, indent=4))
 
-        # Output as flat oData Commands (for Priority loading)
-        #print(json.dumps(json.loads(q.toFlatOdata()), sort_keys=False, indent=4))
+    # Output as flat oData Commands (for Priority loading)
+    #print(json.dumps(json.loads(q.toFlatOdata()), sort_keys=False, indent=4))
 
-        # Create an object to hold the result
-        Response = Response()
-        
-        # Send toFlatOdata method to Priority API
-        q.toPri(
-            Config(
-                env="wlnd" , 
-                path=os.getcwd()
-            ) , 
-            q.toFlatOdata , 
-            response=Response
-        )
-        
-        # Display the result
-        print( "[{}]: {}".format( Response.Status , Response.Message ) )
-        print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
+    # Create an object to hold the result
+    Response = Response()
+    
+    # Send toFlatOdata method to Priority API
+    q.toPri(
+        Config(
+            env="wlnd" , 
+            path=os.getcwd()
+        ) , 
+        q.toFlatOdata , 
+        response=Response
+    )
+    
+    # Display the result
+    print( "[{}]: {}".format( Response.Status , Response.Message ) )
+    print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
+
 
     #endregion
 
