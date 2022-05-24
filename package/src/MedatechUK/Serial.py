@@ -138,7 +138,10 @@ class SerialBase :
         self.log = mLog() 
         for arg in kwargs.keys():            
             if ( hasattr( self , arg ) ) :
-                setattr( self , arg , kwargs[arg] )
+                try:
+                    setattr( self , arg , kwargs[arg] )
+                except:
+                    pass
     
     #endregion
 
@@ -229,23 +232,39 @@ class SerialBase :
                         ret += self.toFlatOdata(this.__dict__[key])
                     
                     else:
-                        if(hasattr(this,"props")) :
+                        if(hasattr(this,"props")) and this.props.__contains__(key.lstrip('_')):
                             if(f==0):
                                 f = 1
                             else :
                                 ret +=(", ")
                             ret +=(this.props[key.lstrip('_')].oData(this.__dict__[key]))                        
             
+            # Iterate through readonly properties
+            for key in this.props:
+                if (key != "rt" and key !="bubbleid" and key !="formname" and key !="typename"):
+                    if not this.__dict__.__contains__("_" + key):
+                        if(f==0):
+                            f = 1
+                        else :
+                            ret +=(", ")
+                        ret +=(this.props[key.lstrip('_')].oData(getattr(this, key)))                  
+                
         if(l!=0):
             ret += "] }"
 
         return ret
     
     def toPri(self, config, method, **kwargs):            
+        
+        ## This function will PATCH a completion request ONLY
+        ## if the fornname of the upper level is 'ZODA_TRANS'
 
+        # Set the response object
         if kwargs.__contains__("request"):
+            # The call contains a request - populate it's response
             ret = kwargs["request"].response
         elif kwargs.__contains__("response"):
+            # The call contains a response - populate directly
             ret = kwargs["response"]
             
         url = '/odata/priority/{}/{}/{}'.format(config.tabulaini , config.environment , self.form.fname)
@@ -269,48 +288,59 @@ class SerialBase :
         res = r.getresponse()             
         if res.status == 201: # Created
             self.log.logger.debug("[{}] OK".format( res.status ))
-            data = json.loads(res.read())    
 
-            patch = {}
-            patch['COMPLETE'] = "Y"
-
-            r.request( 
-                'PATCH', 
-                url + "(BUBBLEID='"+ data['BUBBLEID'] + "',LOADTYPE=" + str(data['LOADTYPE']) + ")", 
-                headers=headers, 
-                body=json.dumps(patch) 
-            )
-            
-            self.log.logger.debug("PATCHing to [{}] ... ".format( url + "(BUBBLEID='"+ data['BUBBLEID'] + "',LOADTYPE=" + str(data['LOADTYPE']) + ")" ))  
-            res = r.getresponse()
-
-            if res.status != 200: # PATCHed
-                self.log.logger.critical("[{}] Fail: {}".format( res.status , res.reason ))
-                ret.Status = res.status   
-                ret.Message = "PATCH Failed: " + res.reason  
-                # If the response is text, create a response with the text         
-                if res.getheader("Content-Type","").find("text/plain") > -1:                             
-                    er = str(res.read().decode('utf-8'))
-                    ret.data = {"error": er }     
-                    self.log.logger.critical("{}".format( er ))              
-
-                else: 
-                    if res.getheader("Content-Type","").find("text/html") > -1:
-                        ret.data = {"error": "Priority service not responding." }     
-                        self.log.logger.critical("{}".format( "Priority service not responding." ))   
-
-                    else:
-                        # Create reponse from json 
-                        ret.data = json.load(res)  
-                        self.log.logger.critical( "{}".format( json.dumps(Response.data  , indent = 4 ) ) )
-
-            else:
-                ## Sucsess!
+            # If we're using the oData loading form, send a PATCH
+            # to identify that all data has been sent.
+            if self.form.fname == 'ZODA_TRANS':
                 self.log.logger.debug("[{}] {}".format( res.status , res.reason ))
                 ret.Status = res.status
                 ret.Message = res.reason
                 ret.data = json.load(res)
-                self.log.logger.debug("Result: {}".format( json.dumps(ret.data  , indent = 4 ) ))
+                self.log.logger.debug("Result: {}".format( json.dumps(ret.data  , indent = 4 )))
+
+            else:
+                data = json.loads(res.read())    
+
+                patch = {}
+                patch['COMPLETE'] = "Y"
+
+                r.request( 
+                    'PATCH', 
+                    url + "(BUBBLEID='"+ data['BUBBLEID'] + "',LOADTYPE=" + str(data['LOADTYPE']) + ")", 
+                    headers=headers, 
+                    body=json.dumps(patch) 
+                )
+                
+                self.log.logger.debug("PATCHing to [{}] ... ".format( url + "(BUBBLEID='"+ data['BUBBLEID'] + "',LOADTYPE=" + str(data['LOADTYPE']) + ")" ))  
+                res = r.getresponse()
+
+                if res.status != 200: # PATCHed
+                    self.log.logger.critical("[{}] Fail: {}".format( res.status , res.reason ))
+                    ret.Status = res.status   
+                    ret.Message = "PATCH Failed: " + res.reason  
+                    
+                    # If the response is text, create a response with the text         
+                    if res.getheader("Content-Type","").find("text/plain") > -1:                             
+                        er = str(res.read().decode('utf-8'))
+                        ret.data = {"error": er }     
+                        self.log.logger.critical("{}".format( er ))              
+
+                    elif res.getheader("Content-Type","").find("text/html") > -1:
+                            ret.data = {"error": "Priority service not responding." }     
+                            self.log.logger.critical("{}".format( "Priority service not responding." ))   
+
+                    else:
+                        # Create reponse from json 
+                        Response.data = json.load(res)  
+                        self.log.logger.critical( "{}".format( json.dumps(Response.data  , indent = 4 ) ) )
+
+                else:
+                    ## Sucsess!
+                    self.log.logger.debug("[{}] {}".format( res.status , res.reason ))
+                    ret.Status = res.status
+                    ret.Message = res.reason
+                    ret.data = json.load(res)
+                    self.log.logger.debug("Result: {}".format( json.dumps(ret.data  , indent = 4 ) ))
 
         else:   
             ret.Status = res.status
@@ -323,15 +353,14 @@ class SerialBase :
                 ret.data = {"error": er }     
                 self.log.logger.critical("{}".format( er ))              
 
-            else: 
-                if res.getheader("Content-Type","").find("text/html") > -1:
+            elif res.getheader("Content-Type","").find("text/html") > -1:
                     ret.data = {"error": "Priority service not responding." }     
                     self.log.logger.critical("{}".format( "Priority service not responding." ))   
 
-                else:
-                    # Create reponse from json 
-                    Response.data = json.load(res)  
-                    self.log.logger.critical( "{}".format( json.dumps(Response.data  , indent = 4 ) ) )
+            else:
+                # Create reponse from json 
+                Response.data = json.load(res)  
+                self.log.logger.critical( "{}".format( json.dumps(Response.data  , indent = 4 ) ) )
 
     #endregion
 
