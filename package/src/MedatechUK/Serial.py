@@ -1,6 +1,9 @@
 import json , uuid , os
 from base64 import b64encode
 from http.client import HTTPSConnection
+import xmltodict , dicttoxml
+from xml.dom.minidom import parseString
+
 from MedatechUK.oDataConfig import Config
 from MedatechUK.mLog import mLog
 from MedatechUK.apy import Response
@@ -114,6 +117,9 @@ class SerialT :
             'REAL': chr(34) + self.pCol + chr(34) + " : " + str(this) ,
         }.get(self._pType.upper(), chr(34) + self.pCol + chr(34) + " : " + chr(34) + str(this) + chr(34))
     
+    def XML(self, this):
+        return "<" + self._pCol + ">" + str(this) + "</" + self._pCol + ">"
+
     #endregion
 
 #endregion 
@@ -136,8 +142,15 @@ class SerialBase :
         self.form = form
         self.props = {}
         self.log = mLog() 
-        for arg in kwargs.keys():            
-            if ( hasattr( self , arg ) ) :
+        for arg in kwargs.keys():  
+            if arg.upper() == 'XML':     
+                t = xmltodict.parse(kwargs[arg].read())           
+                self = self.__init__(**json.loads(json.dumps(t[list(t)[0]])))
+
+            elif arg.upper() == 'JSON':
+                self = self.__init__(**json.loads(kwargs[arg].read()))
+
+            elif ( hasattr( self , arg ) ) :
                 try:
                     setattr( self , arg , kwargs[arg] )
                 except:
@@ -147,10 +160,41 @@ class SerialBase :
 
     #region "Output Methods"
 
-    def toFile(self, fn , method):
-        self.log.logger.debug("Writing file [{}] {}".format( fn , method()))                         
+    def toFile(self, fn , method, **kwargs):
+        self.log.logger.debug("Writing file [{}] {}".format( fn , method(**kwargs)))
         with open(fn, 'w') as the_file:            
-            the_file.write(method()) 
+            the_file.write(method(**kwargs)) 
+
+    def toXML(self , this = 0, root="root"):         
+        ret = ""  
+        l = 0     
+        if (this==0):            
+            l = 1
+            this = self
+            ret +=("<"+ root +">") 
+
+        if isinstance(this, list):            
+            for i in this:
+                ret += "<"+ type(i).__name__ +">"
+                ret +=self.toXML(i)    
+                ret += "</"+ type(i).__name__ +">"                                    
+            
+        else:
+            for key in this.__dict__ :                  
+                if (key != "_props" and key !="form" and key !="log"):                    
+                    if isinstance(this.__dict__[key], list):                              
+                        ret += self.toXML(this.__dict__[key])
+                    
+                    else:
+                        if(hasattr(this,"props")):                            
+                            ret += "<"+ key.lstrip('_') +">"+ str(this.__dict__[key]) +"</"+ key.lstrip('_') +">"
+                
+        if(l!=0):
+            ret +=("</"+ root +">") 
+            return parseString(ret).toprettyxml()            
+        
+        else:
+            return ret
 
     def toJSON(self):        
         return json.dumps(self, default=lambda o: {
@@ -190,7 +234,17 @@ class SerialBase :
                                 f = 1
                             else :
                                 ret +=(", ")
-                            ret +=(this.props[key.lstrip('_')].oData(this.__dict__[key]))            
+                            ret +=(this.props[key.lstrip('_')].oData(this.__dict__[key]))        
+
+            # Iterate through readonly properties
+            for key in this.props:
+                if (key != "rt" and key !="bubbleid" and key !="typename"):
+                    if not this.__dict__.__contains__("_" + key):
+                        if(f==0):
+                            f = 1
+                        else :
+                            ret +=(", ")
+                        ret +=(this.props[key.lstrip('_')].oData(getattr(this, key)))   
 
         if(l!=0):
             ret += " }"
@@ -223,7 +277,6 @@ class SerialBase :
                 else :
                     ret +=(", ")
                 ret +=(this.props["rt"].oData(this.form.rt) ) 
-
             
             for key in this.__dict__ :  
                 if (key != "_props" and key !="form" and key !="log"):
@@ -241,7 +294,7 @@ class SerialBase :
             
             # Iterate through readonly properties
             for key in this.props:
-                if (key != "rt" and key !="bubbleid" and key !="formname" and key !="typename"):
+                if (key != "rt" and key !="bubbleid" and key !="typename"):
                     if not this.__dict__.__contains__("_" + key):
                         if(f==0):
                             f = 1
@@ -361,7 +414,7 @@ class SerialBase :
                 # Create reponse from json 
                 Response.data = json.load(res)  
                 self.log.logger.critical( "{}".format( json.dumps(Response.data  , indent = 4 ) ) )
-
+    
     #endregion
 
 #endregion
