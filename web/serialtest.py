@@ -1,5 +1,8 @@
 import json , uuid , os , sys
-import xmltodict , dicttoxml
+
+from datetime import datetime
+from dateutil.parser import parse
+
 from MedatechUK.Serial import SerialBase , SerialT , SerialF
 from MedatechUK.mLog import mLog
 from MedatechUK.apy import Response
@@ -75,11 +78,30 @@ class orderitems(SerialBase) :
         self._qty = value
                 
     @property
-    def duedate(self):    
+    def duedate(self):  
         return self._duedate
+
     @duedate.setter
     def duedate(self, value):
-        self._duedate = value
+        self._duedate = value    
+
+    # Readonly calculated property
+    @property
+    def pridate(self):
+        try :
+            d = parse(self._duedate)    
+            return int(
+                (datetime(
+                    d.year, 
+                    d.month, 
+                    d.day, 
+                    d.hour, 
+                    d.minute) 
+                - datetime(1988, 1, 1)).total_seconds() / 60
+            )     
+        except:
+            return 0        
+
     #endregion
 
     #region "ctor"
@@ -88,8 +110,8 @@ class orderitems(SerialBase) :
         #region "Property defaults"
         self.partname = ''
         self.qty=0
-        self.duedate = ''        
-
+        self.duedate = ''     
+        
         #endregion
 
         #region "Set Meta info"
@@ -97,7 +119,9 @@ class orderitems(SerialBase) :
         SerialT(self, "rt")
         SerialT(self, "partname" , pCol="TEXT1" , Len=10 , pType="CHAR")
         SerialT(self, "qty" , pCol="REAL1" , pType="REAL")
-        SerialT(self, "duedate" , pCol="INT2" , pType="INT")
+        
+        # pridate is a readonly function that converts the dudate to a Priority integer
+        SerialT(self, "pridate" , pCol="INT2" , pType="INT")
 
         #endregion
     
@@ -120,7 +144,7 @@ def ProcessRequest(request) :
         log.logger.critical(str(e))
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]        
-        request.Status = 500
+        request.response.Status = 500
         request.response.Message = "Internal Server Error"
         request.response.data ={ "error" :
             {
@@ -146,53 +170,56 @@ if __name__ == '__main__':
 
     #region "Create an order"
     x = order( custname = 'CUST123' , ordname = 'ORD1112233' )
-    x.orderitems.append(orderitems(partname="ABC" , qty=1.1 , duedate=818181818))
-    x.orderitems.append(orderitems(partname="DEF" , qty=2.2 , duedate=818181818))
-    x.orderitems.append(orderitems(partname="GHI" , qty=3.3 , duedate=818181818))
+    x.orderitems.append(orderitems(partname="ABC" , qty=1.1 , duedate="01/01/2022"))
+    x.orderitems.append(orderitems(partname="DEF" , qty=2.2 , duedate="02/01/2022"))
+    x.orderitems.append(orderitems(partname="GHI" , qty=3.3 , duedate="03/01/2022"))
+    
+    # Output as json
+    print(x.toJSON())
 
-    # Save the order to file    
-    x.toFile('test.json', x.toJSON)
+    # Output as xml, with a root node for XML
+    print(x.toXML(root="top"))
 
     #endregion
 
     #region "Load Order from xml file"    
-    #with open('test.xml', 'r') as the_file:
-    #    t= xmltodict.parse(the_file.read())
-    #    q = order(**json.loads(json.dumps(t[list(t)[0]])))
-    
+    with open('test2.xml', 'r') as the_file:        
+        q = order(xml=the_file)
+        # Save to json
+        q.toFile('test2.json', q.toJSON)
+
     #endregion
     
     #region "Load Order from json file"    
-    with open('test.json', 'r') as the_file:
-        q = order(**json.loads(the_file.read()))
+    with open('test.json', 'r') as the_file:        
+        q = order(json=the_file)
+        # Save to xml
+        q.toFile('test2.xml', q.toXML, root="root")
 
     #endregion
-
+    
     #region "Method usage"
-    # Output as json
-    #print(q.toJSON())
-
-    # Output as nested oData Commands
-    #print(json.dumps(json.loads(q.toOdata()), sort_keys=False, indent=4))
-
-    # Output as flat oData Commands (for Priority loading)
-    #print(json.dumps(json.loads(q.toFlatOdata()), sort_keys=False, indent=4))
 
     # Create an object to hold the result
     Response = Response()
     
-    # Send toFlatOdata method to Priority API
-    q.toPri(
-        Config(
-            env="wlnd" , 
-            path=os.getcwd()
+    # Send to Priority
+    q.toPri(                    # Send this object to Priority
+        Config(                 # Using this configuration
+            env="wlnd" ,            # the Priority environment
+            path=os.getcwd()        # the location of the config file
         ) , 
-        q.toFlatOdata , 
-        response=Response
+        q.toFlatOdata ,         # Method to generate oData Commands
+                                    # toFlatOdata - send to oData load form
+                                    # toOdata - send to nested Priority forms
+                                    # OR a custom method.
+        response=Response       # the apy request/response object. Use:
+                                    # for command:      response=Response   (a new response is used)
+                                    # for apy usage:    request=request     (the request.response is used)
     )
     
     # Display the result
-    print( "[{}]: {}".format( Response.Status , Response.Message ) )
+    print( "[{}]: {}".format( Response.Status , Response.Message ))
     print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
 
     #endregion    
