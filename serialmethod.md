@@ -11,7 +11,9 @@ x.orderitems.append(orderitems(partname="GHI" , qty=3.3 , duedate="03/01/2022"))
 
 ```
 
-## Save Object Instance: 
+## File I/O examples
+
+### Save Object Instance: 
 ```python
 .toFile('{FILENAME}, {METHOD}, root="{ROOT}")
 ```
@@ -22,7 +24,7 @@ x.orderitems.append(orderitems(partname="GHI" , qty=3.3 , duedate="03/01/2022"))
 |METHOD| The method that will return serial data to be written|
 |ROOT| The top level xml node (if method is toXML) Optional|
 
-## Load Object Instance
+### Load Object Instance
 ```python
 with open('{FILENAME}', 'r') as the_file:        
     q = {OBJECT}({SERIALTYPE}=the_file)
@@ -33,7 +35,6 @@ with open('{FILENAME}', 'r') as the_file:
 |OBJECT| The object that will load the data|
 |SERIALTYPE| json OR xml|
 
-## File i/o example
 ### Load from XML, save as JSON
 ```python      
     with open('test2.xml', 'r') as the_file:        
@@ -52,7 +53,7 @@ with open('{FILENAME}', 'r') as the_file:
 ```
 
 ## POST to Priority oData
-Using the *[Configuration](serial.md "Config Object")*
+Using the *[Configuration](serial.md "Config Object")* and *[Response Object](apy.md "Response Object")*
 
 ```python  
     # Create an object to hold the result
