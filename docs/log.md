@@ -1,4 +1,4 @@
-# mLog
+# mLog.py
 
 This package extends the [basic python logger](https://docs.python.org/3/library/logging.html "basic python logger") by:
 - Creating a single log file per day in the format log\YYYY-MM\YYMMDD.log 

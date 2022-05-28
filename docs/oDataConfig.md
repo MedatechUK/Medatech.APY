@@ -27,7 +27,7 @@ This package standardises the storage of required settings for connecting to pri
 |---------------|---------------------------------------|
 | ENVIRONMENT        |The SQL Database name of the Priority Company  |
 | PATH	|The location of the web.config or constants.py setting.|
-||Use path=os.getcwd() to use the current working directory at runtime.|s
+||Use path=os.getcwd() to use the current working directory at runtime.|
 
 ## Config Object
 | Property      |Description                            |
