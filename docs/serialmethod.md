@@ -1,6 +1,35 @@
 # serial.py
 
+The following examples are based on the [order / orderitems class](serial.md "order / orderitems class")
 
+## Create an Object instance
+
+x = order( custname = 'CUST123' , ordname = 'ORD1112233' )
+x.orderitems.append(orderitems(partname="ABC" , qty=1.1 , duedate="01/01/2022"))
+x.orderitems.append(orderitems(partname="DEF" , qty=2.2 , duedate="02/01/2022"))
+x.orderitems.append(orderitems(partname="GHI" , qty=3.3 , duedate="03/01/2022"))
+
+
+## Save Object: 
+```python
+.toFile('{FILENAME}, {METHOD}, root="{ROOT}")
+'''
+
+| Property      |Description                            |
+|---------------|---------------------------------------|
+|FILENAME| The name of the file to save to|
+|METHOD| The method that will return serial data to be written|
+|ROOT| The top level xml node (if method is toXML)|
+
+## Load Object
+```python
+with open('test.json', 'r') as the_file:        
+    q = {OBJECT}({SERIALTYPE}=the_file)
+```
+| Property      |Description                            |
+|---------------|---------------------------------------|
+|OBJECT| The object that will load the data|
+|SERIALTYPE| json OR xml|
 
 ## Example Usage
 
