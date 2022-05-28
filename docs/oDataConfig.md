@@ -2,7 +2,7 @@
 
 Load a configuration file containg settings for connecting to Priority oData. This may be either from:
 - the IIS web.config file
-- a file called constants.py in the root dir of your project
+- a file called constants.py in the PATH folder.
 
 This package standardises the required settings for connecting to priority oData, and can be used in:
 - a web handler (where these settings are stored in the website configuration) 
@@ -25,7 +25,7 @@ This package standardises the required settings for connecting to priority oData
 |---------------|---------------------------------------|
 | ENVIRONMENT        |The SQL Database name of the Priority Company  |
 | PATH	|The location of the web.config or constants.py setting.|
-
+||Use path=os.getcwd() to use the current working directory at runtime.|s
 
 ## Config Object
 | Property      |Description                            |
