@@ -6,22 +6,62 @@
 	from MedatechUK.apy import Request
 ```
 
-## Example Usage: Custom Web Handler
+## Example Usage: Create a Handler
 
 Create a new file in the root, called whatever.py. 
 If a request for the endpoint "whatever" is received, the API injects the whatever.py handler, rather than following the default function.
 Then, in the whatever.py file, import the *Request Object* (see below) and impliment the *ProcessRequest()* method to handle the event.
 
+### A GET Handler
 ```python
-##  A web handler
+##  A GET handler
 #   MUST have a ProcessRequest method to 
 #   process the apy.Request()
 
 def ProcessRequest(request) :
     request.Response.data = { "id": request.query( "id", "123" ) }
 
-```    
+``` 
 
+### A POST Handler
+
+The following handler uses a *([Serial Object](serial.md "Serial Object"))* to decode the request.
+
+```python
+##  A POST handler
+#   MUST have a ProcessRequest method to 
+#   process the apy.Request()
+   
+def ProcessRequest(request) :
+    log = mLog()
+    try:
+        q = order(**request.data)            
+        q.toPri(
+            Config(
+                env=request.environment , 
+                path=os.getcwd()
+            ) , 
+            q.toFlatOdata, 
+            request=request 
+        )        
+    
+    except Exception as e:
+        log.logger.critical(str(e))
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]        
+        request.response.Status = 500
+        request.response.Message = "Internal Server Error"
+        request.response.data ={ "error" :
+            {
+                "type": exc_type,
+                "message": str(e),
+                "script": fname,
+                "line": exc_tb.tb_lineno
+            }
+        } 
+```
+		
+## Calling the Web Handler
 
 ```
 POST https://erp.customer.tld / apy / {environment} / {endpoint} 
@@ -57,7 +97,7 @@ GET https://erp.customer.tld / apy / {environment} / {endpoint} . {fileExt}
 | endpoint      |The name of the endpoint.|
 | ext           |The file extention of the endpoint.|
 | data          |If this is a POST Request the data property holds the data that was posted.|
-| config        |A *([Config Object](/oDataConfig.md "Config Object"))* that holds settings for posting to oData. |
+| config        |A *([Config Object](oDataConfig.md "Config Object"))* that holds settings for posting to oData. |
 | Response      |A *Response Object* (see below) that contains the JSON response to return to the caller. The response is formatted according to the content_type of the request.|
 
 | Method      |Description                            |
