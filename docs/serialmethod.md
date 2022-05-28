@@ -1,85 +1,88 @@
-# serial.py
+# Serial Base Methods.
 
-The following examples are based on the [order / orderitems class](serial.md "order / orderitems class")
+The following examples are based on the [order / orderitems class](serial.md "order / orderitems class").
 
 ## Create an Object instance
-
+```python
 x = order( custname = 'CUST123' , ordname = 'ORD1112233' )
 x.orderitems.append(orderitems(partname="ABC" , qty=1.1 , duedate="01/01/2022"))
 x.orderitems.append(orderitems(partname="DEF" , qty=2.2 , duedate="02/01/2022"))
 x.orderitems.append(orderitems(partname="GHI" , qty=3.3 , duedate="03/01/2022"))
 
+```
 
-## Save Object: 
+## Save Object Instance: 
 ```python
 .toFile('{FILENAME}, {METHOD}, root="{ROOT}")
-'''
+```
 
 | Property      |Description                            |
 |---------------|---------------------------------------|
 |FILENAME| The name of the file to save to|
 |METHOD| The method that will return serial data to be written|
-|ROOT| The top level xml node (if method is toXML)|
+|ROOT| The top level xml node (if method is toXML) Optional|
 
-## Load Object
+## Load Object Instance
 ```python
-with open('test.json', 'r') as the_file:        
+with open('{FILENAME}', 'r') as the_file:        
     q = {OBJECT}({SERIALTYPE}=the_file)
 ```
 | Property      |Description                            |
 |---------------|---------------------------------------|
+|FILENAME| The name of the file to load|
 |OBJECT| The object that will load the data|
 |SERIALTYPE| json OR xml|
 
-## Example Usage
+## File i/o example
+### Load from XML, save as JSON
+```python      
+    with open('test2.xml', 'r') as the_file:        
+        q = order(xml=the_file)
+        # Save to json
+        q.toFile('test2.json', q.toJSON)
+```
 
-```python
-
-    #region "Create an order"
-    x = order( custname = 'CUST123' , ordname = 'ORD1112233' )
-    x.orderitems.append(orderitems(partname="ABC" , qty=1.1 , duedate=818181818))
-    x.orderitems.append(orderitems(partname="DEF" , qty=2.2 , duedate=818181818))
-    x.orderitems.append(orderitems(partname="GHI" , qty=3.3 , duedate=818181818))
-
-    # Save the order to file    
-    x.toFile('test.json', x.toJSON)
-
-    #endregion
-
-    #region "Load Order from file"
-    log.logger.debug("Opening {}".format('test.json'))    
-    with open('test.json', 'r') as the_file:
-        q = order(**json.loads(the_file.read()))
-
-        # Output as json
-        #print(q.toJSON())
-
-        # Output as nested oData Commands
-        #print(json.dumps(json.loads(q.toOdata()), sort_keys=False, indent=4))
-
-        # Output as flat oData Commands (for Priority loading)
-        #print(json.dumps(json.loads(q.toFlatOdata()), sort_keys=False, indent=4))
-
-        # Create an object to hold the result
-        Response = Response()
-        
-        # Send toFlatOdata method to Priority API
-        q.toPri(
-            Config(
-                env="wlnd" , 
-                path=os.getcwd()
-            ) , 
-            q.toFlatOdata , 
-            response=Response
-        )
-        
-        # Display the result
-        print( "[{}]: {}".format( Response.Status , Response.Message ) )
-        print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
+### Load from JSON, save as XML
+```python      
+    with open('test.json', 'r') as the_file:        
+        q = order(json=the_file)
+        # Save to xml
+        q.toFile('test2.xml', q.toXML, root="root")
 
 ```
 
+## POST to Priority oData
+Using the *[Configuration](serial.md "Config Object")*
+
+```python  
+    # Create an object to hold the result
+    Response = Response()
+    
+    # Send to Priority
+    q.toPri(                    # Send this object to Priority
+        
+        Config(                 # Using this configuration
+            env="wlnd" ,            # the Priority environment
+            path=os.getcwd()        # the location of the config file
+        ) , 
+
+        q.toFlatOdata ,         # Method to generate oData Commands
+                                    # toFlatOdata - send to oData load form
+                                    # toOdata - send to nested Priority forms
+                                    # OR a custom method.
+        
+        response=Response       # the apy request/response object. Use:
+                                    # for command:      response=Response   (a new response is used)
+                                    # for apy usage:    request=request     (the request.response is used)
+    )
+    
+    # Display the result
+    print( "[{}]: {}".format( Response.Status , Response.Message ))
+    print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
+```
+
 ## Usage as a web handler
+Using the *[Request Object](apy.md "Request Object")*
 ```python
 def ProcessRequest(request) :
     try:
