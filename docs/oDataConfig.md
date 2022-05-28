@@ -32,7 +32,7 @@ This package standardises the required settings for connecting to priority oData
 ## Config Object
 | Property      |Description                            |
 |---------------|---------------------------------------|
-| oDataHost     | The URL of the oData service, eg: https://walrus.ntsa.uk |
+| oDataHost     | The URL of the oData service, eg: https://priority.ntsa.uk |
 | tabulaini     | The tabula.ini file to use for the connection |
 | ouser         |The oData user, with API licence|
 | opass         |The oData passsword|
@@ -54,9 +54,9 @@ This package standardises the required settings for connecting to priority oData
 
 ## Example \constants.py
 ```python
-oDataHost ="walrus.ntsa.uk"
-tabulaini ="tabula.ini"
-ouser ="apiuser"
-opass ="123456"    
+oDataHost ="priority.someurl"
+tabulaini ="***********"
+ouser ="***********"
+opass ="***********"    
 connStr="Server=127.0.0.1\PRI,1433;Trusted_Connection=Yes;MultipleActiveResultSets=true;"
 ```
