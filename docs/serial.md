@@ -161,6 +161,93 @@ Additionally there are some predefined fields you can include in your load data:
 |SerialT(self, "rt")| The record Type defined for the form (see FormF)|
 |SerialT(self, "typename")|The load Type defined for the form (see FormF)|
 
+
+## Property translation
+
+Imagine we receive the following order:
+```json
+{
+    "custname": "CUST123",
+    "ordname": "ORD1112233",
+    "orderitems": [
+        {
+            "partname": "ABC",
+            "qty": 1.1,
+            "duedate": "01/01/2022"
+        },
+        {
+            "partname": "DEF",
+            "qty": 2.2,
+            "duedate": "02/01/2022"
+        },
+        {
+            "partname": "GHI",
+            "qty": 3.3,
+            "duedate": "03/01/2022"
+        }
+    ]
+}
+```
+The due date we receive is a string, wheras Priority dates are minutes past 01/01/1988.
+
+In order to convert this we can add a calculated read only property like so:
+```python
+@property
+def pridate(self):
+    try :
+        d = parse(self._duedate)    
+        return int(
+            (datetime(
+                d.year, 
+                d.month, 
+                d.day, 
+                d.hour, 
+                d.minute) 
+            - datetime(1988, 1, 1)).total_seconds() / 60
+        )     
+    except:
+        return 0 
+
+```
+And add that as the SerialT, instead of Due Date:
+```python
+# pridate is a readonly function that converts the dudate to a Priority integer
+SerialT(self, "pridate" , pCol="INT2" , pType="INT")
+```
+
+This converts the data sent to priority from text to a valid date:
+```json
+{
+    "BUBBLEID": "979b9402-8f99-456d-9a7c-2fed769981d6",
+    "TYPENAME": "ORD",
+    "ZODA_LOAD_SUBFORM": [
+        {
+            "RECORDTYPE": "1",
+            "TEXT1": "CUST123",
+            "TEXT2": "ORD1112233"
+        },
+        {
+            "RECORDTYPE": "2",
+            "TEXT1": "ABC",
+            "REAL1": 1.1,
+            "INT2": 17883360
+        },
+        {
+            "RECORDTYPE": "2",
+            "TEXT1": "DEF",
+            "REAL1": 2.2,
+            "INT2": 17928000
+        },
+        {
+            "RECORDTYPE": "2",
+            "TEXT1": "GHI",
+            "REAL1": 3.3,
+            "INT2": 17968320
+        }
+    ]
+}
+```
+
 ## Order Class Full code listing
 
 ```python
