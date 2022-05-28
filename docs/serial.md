@@ -60,12 +60,14 @@ This seperates our code from our data, and means we can run any function from *S
 
 ## Sub Objects
 
-Our order class need to have some orderitems. First we need to define what an order item will contain:
+Our order class needs to have some items. 
+
+Our order item will contain the following properties:
 - part name
 - quantity
 - due date
 
-We can define our order item like so:
+We can define our item like so:
 
 ```python
 class orderitems(SerialBase) :
@@ -92,7 +94,7 @@ class orderitems(SerialBase) :
         self._duedate = value   
 ```
 
-And add a new property to the *order* class, defining a list of *orderitems*:
+Now we add a new property to the *order* class, defining a list of *orderitems*:
 
 ```python
 class order(SerialBase) :
@@ -108,6 +110,54 @@ class order(SerialBase) :
         for i in range(len(self._orderitems)):
             self._orderitems[i] = orderitems(**self._orderitems[i])
 ```
+
+## Default property values 
+
+We can set he default values for our properties in our classes constructor method "__init__".
+
+```python
+    def __init__(self,  **kwargs): 
+	        
+        self.custname = 0
+        self.ordname = ""
+        self.orderitems = [] 
+```
+
+## Meta data
+
+We call the base constructor with a SerialF class (Serial Form), which contains information including:
+- the Priorty odata form name (mandatory)
+- the record type (for loading into oData form)
+- the typename (also for loading into oData form)
+
+```python
+	def __init__(self,  **kwargs): 
+	
+	...
+	
+	SerialBase.__init__(self , SerialF(fname="ZODA_TRANS", rt=1, typename="ORD"), **kwargs)
+	
+```
+
+For each property we want to send to Priority oData, we also need to add a SerialT class (Serial Type), which contains the properties:
+- Priority column name
+- Length
+- Type
+
+```python
+	def __init__(self,  **kwargs): 
+	
+	...
+	
+	SerialT(self, "PROPERTY_NAME" , pCol="PRIORITY_COLUMN" , Len=LENGTH , pType="PRIORITY_TYPE")
+	
+```
+| Property      |Description                            |
+|---------------|---------------------------------------|
+| PROPERTY_NAME        |The (case sensitive) name of the property in the class   |
+| PRIORITY_COLUMN        |  The column name in Priority |
+| LENGTH        |The maximun length (optonal)|
+| PRIORITY_TYPE        |The Priority data type of the data e.g. TEXT, INT, REAL|
 
 ## Custom Business Objects
 
