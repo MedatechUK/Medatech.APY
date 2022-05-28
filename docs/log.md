@@ -1,12 +1,12 @@
 # mLog
 
-This package extends the basic python logger by:
+This package extends the [basic python logger](https://docs.python.org/3/library/logging.html "basic python logger") by:
 - Creating a single log file per day in the format log\YYYY-MM\YYMMDD.log 
-- Adding stack trace information to the log. 
+- Adding stack trace information to the log 
 
 This prevents log files becoming unusable due to size and is useful for issue tracing.
 
-All the other controls in the repository use this logging package.
+This logging package is used consisently throughout the other packages in this repository.
 
 ## Imports
 ```python
@@ -29,15 +29,15 @@ Use the start method *ONCE*, to initialise your log.
 | Property      |Description                            |
 |---------------|---------------------------------------|
 | Log Location        |The folder in which to store log files   |
-| Verbosity	|The Verbosity of the log decides which messages are stored to the log (see Verbosity Settings below)|
+| Verbosity	|The Verbosity of the log decisdes which Logging Levels are recorded (see Verbosity Settings below)|
 
-### log.logger.{VERBOSITY}(Message)
+### log.logger.{VERBOSITY}("Message")
 
-Once initialised you can use the log.logger.{VERBOSITY} method anywhere on your code.
+Once initialised you can use the log.logger.{VERBOSITY} method anywhere on your code (see Verbosity Settings below).
 
 | Property      |Description                            |
 |---------------|---------------------------------------|
-| Verbosity	|The Verbosity of the message (see Verbosity Settings below) |
+| Verbosity	|The Logging Level of the message (see Verbosity Settings below) |
 | Message	|The text to be written to the logfile |
 
 ## Logging Level Verbosity
