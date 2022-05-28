@@ -8,8 +8,10 @@
 
 ## Example Usage: Create a Handler
 
-Create a new file in the root, called whatever.py. 
-If a request for the endpoint "whatever" is received, the API injects the whatever.py handler, rather than following the default function.
+Create a new python file in the root directory of your webserver, called whatever.py. 
+
+If a request for the endpoint "whatever" is received, the API injects the whatever.py handler.
+
 Then, in the whatever.py file, import the *Request Object* (see below) and impliment the *ProcessRequest()* method to handle the event.
 
 ### A GET Handler
@@ -25,7 +27,10 @@ def ProcessRequest(request) :
 
 ### A POST Handler
 
-The following handler uses a *([Serial Object](serial.md "Serial Object"))* to decode the request.
+The following POST handler:
+- uses a *[Serial Object](serial.md "Serial Object")* to decode the request
+- adds *[Logging](log.md "mlog Object")*
+- adds error handling.
 
 ```python
 ##  A POST handler
