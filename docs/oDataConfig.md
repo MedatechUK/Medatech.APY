@@ -54,9 +54,9 @@ This package standardises the required settings for connecting to priority oData
 
 ## Example \constants.py
 ```python
-	oDataHost ="walrus.ntsa.uk"
-	tabulaini ="tabula.ini"
-	ouser ="apiuser"
-	opass ="123456"    
-	connStr="Server=127.0.0.1\PRI,1433;Trusted_Connection=Yes;MultipleActiveResultSets=true;"
+oDataHost ="walrus.ntsa.uk"
+tabulaini ="tabula.ini"
+ouser ="apiuser"
+opass ="123456"    
+connStr="Server=127.0.0.1\PRI,1433;Trusted_Connection=Yes;MultipleActiveResultSets=true;"
 ```
