@@ -8,7 +8,7 @@ It loads a configuration file containg the oData settings from *either*:
 
 This package standardises the required settings for connecting to priority oData, and can be used in:
 - a web handler (where these settings are stored in the website configuration) 
-- a command line (where these settings are stored in a file called constants.py in the PATH directory of your project).
+- a command line (where these settings are stored in a file called constants.py in the PATH directory).
 
 ## Imports
 ```python
