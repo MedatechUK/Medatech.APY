@@ -5,6 +5,12 @@ This package extends the basic [property](https://docs.python.org/3/library/func
 - adding data translations
 - Loading into Priority
 
+## Imports
+```python
+from MedatechUK.Serial import SerialBase , SerialT , SerialF
+
+```
+
 ## Serialisation?
 
 Serialisation is converting an object to a text representation of itself.
@@ -39,12 +45,6 @@ class order() :
     def ordname(self, value):
         self._ordname = value
 ```		
-
-## Imports
-```python
-from MedatechUK.Serial import SerialBase , SerialT , SerialF
-
-```
 
 ## Inheriting the serial base
 
