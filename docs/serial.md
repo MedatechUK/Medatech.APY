@@ -15,7 +15,7 @@ De-Serialisation is converting the text representation back into an object.
 
 An object is an heirarchy of properties, that defines the structure and content of the data being shared.
 
-Imagine a simple order class. An order has 2 properties:
+Imagine a simple order class with 2 properties:
 - the customer
 - their PO number
 
@@ -24,8 +24,7 @@ We can write this so that custname and ordname are properties of our order:
 ```python
 
 class order() :
-
-    #region Properties
+    
     @property
     def custname(self):    
         return self._custname
@@ -47,10 +46,72 @@ from MedatechUK.Serial import SerialBase , SerialT , SerialF
 
 ```
 
-## Custom Business Objects
+## Inheriting the serial base
+
+This package provides a inheritable class for working with serialisable objects called *SerialBase*, which we inherit like this:
 
 ```python
 
+class order(SerialBase) :
+
+```
+
+This seperates our code from our data, and means we can run any function from *SerialBase* on the data stored in our object.
+
+## Sub Objects
+
+Our order class need to have some orderitems. First we need to define what an order item will contain:
+- part name
+- quantity
+- due date
+
+We can define our order item like so:
+
+```python
+class orderitems(SerialBase) :
+    
+    @property
+    def partname(self):    
+        return self._partname
+    @partname.setter
+    def partname(self, value):
+        self._partname = value
+                
+    @property
+    def qty(self):    
+        return self._qty
+    @qty.setter
+    def qty(self, value):
+        self._qty = value
+                
+    @property
+    def duedate(self):  
+        return self._duedate
+    @duedate.setter
+    def duedate(self, value):
+        self._duedate = value   
+```
+
+And add a new property to the *order* class, defining a list of *orderitems*:
+
+```python
+class order(SerialBase) :
+
+...
+
+    @property
+    def orderitems(self):    
+        return self._orderitems
+    @orderitems.setter
+    def orderitems(self, value):        
+        self._orderitems = value
+        for i in range(len(self._orderitems)):
+            self._orderitems[i] = orderitems(**self._orderitems[i])
+```
+
+## Custom Business Objects
+
+```python
 class order(SerialBase) :
 
     #region Properties
