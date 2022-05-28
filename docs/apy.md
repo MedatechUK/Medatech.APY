@@ -1,6 +1,10 @@
 # apy.py
 
+This package defines:
+- a Request object that is passed to the *ProcessRequest()* method of a handler.
+- a Response object that can be edited to provide an appropriate response (http status , message and data) to the Request
 
+To set up your IIS to create handlers, see the *[IIS config](iis.md "IIS config")*.
 
 ## Imports
 ```python
@@ -103,7 +107,7 @@ GET https://erp.customer.tld / apy / {environment} / {endpoint} . {fileExt}
 | endpoint      |The name of the endpoint.|
 | ext           |The file extention of the endpoint.|
 | data          |If this is a POST Request the data property holds the data that was posted.|
-| config        |A *([Config Object](oDataConfig.md "Config Object"))* that holds settings for posting to oData. |
+| config        |A *[Config Object](oDataConfig.md "Config Object")* that holds settings for posting to oData. |
 | Response      |A *Response Object* (see below) that contains the JSON response to return to the caller. The response is formatted according to the content_type of the request.|
 
 | Method      |Description                            |
