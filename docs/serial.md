@@ -11,15 +11,15 @@ from MedatechUK.Serial import SerialBase , SerialT , SerialF
 
 ```
 
-## Serialisation?
+### Serialisation?
 
 Serialisation is converting an object to a text representation of itself.
 
 De-Serialisation is converting the text representation back into an object.
 
-## Object?
+### Object?
 
-An object is an heirarchy of properties, that defines the structure and content of the data being shared.
+An object is an heirarchy of properties, that defines both the structure and content of the data it will store.
 
 Imagine a simple order class with 2 properties:
 - the customer
@@ -57,6 +57,8 @@ class order(SerialBase) :
 ```
 
 This seperates our code from our data, and means we can run any function from *SerialBase* on the data stored in our object.
+
+See [Serial Methods](serialmethod.md "Serial Methods").
 
 ## Sub Objects
 
@@ -111,7 +113,7 @@ class order(SerialBase) :
 
 ## Default property values 
 
-We can set he default values for our properties in our classes constructor method "__init__".
+We must set the default values for our properties in our classes constructor method "__init__".
 
 ```python
     def __init__(self,  **kwargs): 
