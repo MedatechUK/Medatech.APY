@@ -60,14 +60,12 @@ This seperates our code from our data, and means we can run any function from *S
 
 ## Sub Objects
 
-Our order class needs to have some items. 
-
-Our order item will contain the following properties:
+Now our order class needs to have some ordered items, so we'll create and order item class that will contain the following properties:
 - part name
 - quantity
 - due date
 
-We can define our item like so:
+We can define our order item class like so:
 
 ```python
 class orderitems(SerialBase) :
@@ -139,11 +137,7 @@ We call the base constructor with a SerialF class (Serial Form), which contains 
 	
 ```
 
-For each property we want to send to Priority oData, we also need to add a SerialT class (Serial Type), which contains the properties:
-- Priority column name
-- Length
-- Type
-
+For each property we want to send to Priority oData, we also need to define a column with the SerialT class (Serial Type), which contains extra information about the property.
 ```python
 	def __init__(self,  **kwargs): 
 	
@@ -154,12 +148,20 @@ For each property we want to send to Priority oData, we also need to add a Seria
 ```
 | Property      |Description                            |
 |---------------|---------------------------------------|
-| PROPERTY_NAME        |The (case sensitive) name of the property in the class   |
-| PRIORITY_COLUMN        |  The column name in Priority |
-| LENGTH        |The maximun length (optonal)|
+| PROPERTY_NAME        |The (case sensitive) name of the property in the class (Mandatory)  |
+| PRIORITY_COLUMN        |  The column name in Priority (Mandatory)|
 | PRIORITY_TYPE        |The Priority data type of the data e.g. TEXT, INT, REAL|
+| LENGTH        |The maximun length (optonal)|
 
-## Custom Business Objects
+Additionally there are some predefined fields you can include in your load data:
+
+| Field	|Description                            |
+|---------------|---------------------------------------|
+|SerialT(self, "bubbleid")|A unique identifier for the transaction|
+|SerialT(self, "rt")| The record Type defined for the form (see FormF)|
+|SerialT(self, "typename")|The load Type defined for the form (see FormF)|
+
+## Order Class Full code listing
 
 ```python
 class order(SerialBase) :
