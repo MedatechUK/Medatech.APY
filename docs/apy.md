@@ -1,6 +1,7 @@
 # apy.py
 
 
+
 ## Imports
 ```python
 from MedatechUK.apy import Request
@@ -29,8 +30,8 @@ def ProcessRequest(request) :
 
 The following POST handler:
 - uses a *[Serial Object](serial.md "Serial Object")* to decode the request
-- adds *[Logging](log.md "mlog Object")*
-- adds error handling.
+- gets the *[Configuration](serial.md "Config Object")* from the web server
+- adds error handling and *[Logging](log.md "mlog Object")*
 
 ```python
 ##  A POST handler
