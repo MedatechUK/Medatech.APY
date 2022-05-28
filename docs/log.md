@@ -1,178 +1,50 @@
-# Markdown Document
+# mLog
 
-## Introduction
+This package extends the basic python logger by creating a single log file per day and adding stack information to the log. 
 
-Markdown is a plain text formatting syntax.
+This prevents log files becoming unusable due to size and is useful for issue tracing.
 
-Paragraphs are separated by empty lines.
-
-## Heading 2
-
-### Heading 3
-
-#### Heading 4
-
-##### Heading 5
-
-###### Heading 6
-
-## Character Styles
-
-These spans result in 'em' tags:
-
-- *single asterisks*
-- _single underscores_
-
-These spans result in 'strong' tags:
-
-- **double asterisks**
-- __double underscores__
-
-These spans result in 'del' tags:
-
-- ~~double tildes~~
-
-## Links and Images
-
-This is an [example inline link](https://www.actiprosoftware.com "Actipro Software") with tooltip text specified.
-[This link](https://www.actiprosoftware.com) has no tooltip text specified.
-
-URLs and e-mail addresses can be turned into links by enclosing them in angle braces:
-
-- <https://www.actiprosoftware.com>  
-- <support@microsoft.com>
-
-[This link](#markdown-document) links to the first heading in this document via custom ID.
-
-## Images
-
-This is an example of an image:
-
-![Image](https://www.microsoft.com/favicon.ico)
-
-This is an example of an image with a link:
-
-[![Image](https://www.google.com/favicon.ico)](https://www.google.com)
-
-## Blockquotes
-
-Markdown said:
-
-> This is the first level of quoting.
->
-> > This is a nested blockquote.
->
-> Back to the first level.
-
-## Lists
-
-Unordered list using minus signs (-):
-
-- Step 1
-- Step 2
-- Step 3
-  - Step 3a
-  - Step 3b
-  - Step 3c
-
-Unordered list using plus signs (+):
-
-+ Step 1
-+ Step 2
-+ Step 3
-  + Step 3a
-  + Step 3b
-  + Step 3c
-
-Unordered list using asterisks (*):
-
-* Step 1
-* Step 2
-* Step 3
-  * Step 3a
-  * Step 3b
-  * Step 3c
-
-Ordered list:
-
-1. Step 1
-1. Step 2
-1. Step 3
-    1. Step 3a
-    1. Step 3b
-    1. Step 3c
-
-Nested (unordered within ordered) list:
-
-1. Step 1
-1. Step 2
-1. Step 3
-    - Step 3a
-    - Step 3b
-    - Step 3c
-
-Definition list:
-
-Term #1
-: This is the definition of term #1.
-
-Term #2
-: This is the definition of term #2.
-
-## Code Blocks
-
-Inline `code` can be delimited with characters.
-
-This code block is fenced with three backticks and has its language specified:
-
-```javascript
-var oldUnload = window.onbeforeunload;
-window.onbeforeunload = function() {
-    saveCoverage();
-    if (oldUnload) {
-        return oldUnload.apply(this, arguments);
-    }
-};
+## Imports
+```python
+	from MedatechUK.mLog import mLog
 ```
 
-This code block is fenced with three tildes and has its language specified:
+## Creating a log
+```python
+    log = mLog()
+    log.start( os.getcwd(), "DEBUG" )
+    log.logger.debug("Starting {}".format(__file__))     
+	
+```
+## Methods
 
-~~~ruby
-require 'redcarpet'
-markdown = Redcarpet.new("Hello World!")
-puts markdown.to_html
-~~~
+### log.start( {Log Location} , {VERBOSITY} )
 
-This code block is created by indenting the code, but no language can be specified:
+Use the start method ONCE, to initiaklise your log. 
 
-    var foo = 1;
+| Property      |Description                            |
+|---------------|---------------------------------------|
+| Log Location        |The folder in which to store log files   |
+| Verbosity	|The Verbosity of the log decides which messages are stored to the log (see Verbosity Settings below)|
 
-## Tables
+### log.logger.{VERBOSITY}(Message)
 
-| Fruit  | Color  |
-|--------|--------|
-| Apples | Red    |
-| Grapes | Purple |
-| Lemons | Yellow |
+Once initialised you can use the log.logger.{VERBOSITY} method anywhere on your code.
 
-## Horizontal Rules
+| Property      |Description                            |
+|---------------|---------------------------------------|
+| Verbosity	|The Verbosity of the message (see Verbosity Settings below) |
+| Message	|The text to be written to the logfile |
 
-Horizontal rules are formed by placing three or more hyphens, asterisks, or underscores on a line by themselves.
+## Logging Level Verbosity
 
----
+From [Python Docs](https://docs.python.org/3/library/logging.html#levels "Python Docs").
 
-***
-
-___
-
-## HTML Tags
-
-<strong>HTML tags</strong> can optionally be used in <em>Markdown</em>.
-
-## Special Characters
-
-Unescaped:
-\ ` * _ { } [ ] ( ) # + - . !
-
-Backslash-Escaped:
-\\ \` \* \_ \{ \} \[ \] \( \) \# \+ \- \. \!
+|Level|Numeric value|
+|-----|-------------|
+|CRITICAL|50|
+|ERROR|40|
+|WARNING|30|
+|INFO|20|
+|DEBUG|10|
+|NOTSET|0|
