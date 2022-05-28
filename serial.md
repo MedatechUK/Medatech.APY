@@ -5,6 +5,8 @@ This package extends the basic [property](https://docs.python.org/3/library/func
 - adding data translations
 - Loading into Priority
 
+See also: [Serial Methods](serialmethod.md "Serial Methods").
+
 ## Imports
 ```python
 from MedatechUK.Serial import SerialBase , SerialT , SerialF
