@@ -3,7 +3,7 @@
 
 ## Imports
 ```python
-	from MedatechUK.apy import Request
+from MedatechUK.apy import Request
 ```
 
 ## Example Usage: Create a Handler
