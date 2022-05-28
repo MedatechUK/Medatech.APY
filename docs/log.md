@@ -1,8 +1,12 @@
 # mLog
 
-This package extends the basic python logger by creating a single log file per day and adding stack information to the log. 
+This package extends the basic python logger by:
+- Creating a single log file per day in the format log\YYYY-MM\YYMMDD.log 
+- Adding stack trace information to the log. 
 
 This prevents log files becoming unusable due to size and is useful for issue tracing.
+
+All the other controls in the repository use this logging package.
 
 ## Imports
 ```python
@@ -20,7 +24,7 @@ This prevents log files becoming unusable due to size and is useful for issue tr
 
 ### log.start( {Log Location} , {VERBOSITY} )
 
-Use the start method ONCE, to initiaklise your log. 
+Use the start method *ONCE*, to initialise your log. 
 
 | Property      |Description                            |
 |---------------|---------------------------------------|
