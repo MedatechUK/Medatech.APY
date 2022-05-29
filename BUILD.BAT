@@ -1,4 +1,5 @@
 copy "C:\Program Files\Python39\Lib\site-packages\MedatechUK\*.py" m:\python\MedatechUK.APY\package\src\MedatechUK
+copy "m:\python\MedatechUK.APY\*.md" m:\python\MedatechUK.APY\package
 move M:\python\MedatechUK.APY\package\dist\*.* M:\python\MedatechUK.APY\package\old
 m:
 CD m:\python\MedatechUK.APY\package
