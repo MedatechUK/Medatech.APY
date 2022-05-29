@@ -43,6 +43,8 @@ into a request to:
 default.py?environment={PRIORITY_COMPANY}&endpoint={SOME_PAGE}
 ```
 
+These values are used by the apy. See [APY Class](apy.md "APY Class")
+
 Add the following rewrite rules to the web.config.
 ```xml
 <rewrite>
