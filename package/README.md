@@ -13,7 +13,7 @@ pip install MedatechUK.APY
 
 ## Imports
 
-### [Logging Class](log.md "Logging Class")
+### [Logging Class](https://github.com/MedatechUK/Medatech.APY/blob/main/docs/log.md "Logging Class")
 
 A class to create log files.
 
@@ -26,7 +26,7 @@ log.logger.debug("Starting {}".format(__file__))
 
 ```
 
-### [Config Class](oDataConfig.md "Config Class")
+### [Config Class](https://github.com/MedatechUK/Medatech.APY/blob/main/docs/oDataConfig.md "Config Class")
 
 A class for managing oData settings.
 
@@ -40,11 +40,11 @@ c = Config(	                 # Using this configuration
 
 ```
 
-### [Serial Class](serial.md "Serial Class")
+### [Serial Class](https://github.com/MedatechUK/Medatech.APY/blob/main/docs/serial.md "Serial Class")
 
 A package for working with serial data.
 
-See also: [Serial object methods](serialmethod.md "Serial object methods")
+See also: [Serial object methods](https://github.com/MedatechUK/Medatech.APY/blob/main/docs/serialmethod.md "Serial object methods")
 
 ```python
 from MedatechUK.Serial import SerialBase , SerialT , SerialF
@@ -57,11 +57,11 @@ with open('test.json', 'r') as the_file:
 	
 ```
 
-### [APY Class](apy.md "APY Class")
+### [APY Class](https://github.com/MedatechUK/Medatech.APY/blob/main/docs/apy.md "APY Class")
 
 A class for handling HTTP Request/Response.
 
-See Also: [How to set up IIS](iis.md "How to set up IIS")
+See Also: [How to set up IIS](https://github.com/MedatechUK/Medatech.APY/blob/main/docs/iis.md "How to set up IIS")
 
 ```python
 from MedatechUK.apy import Request , Response

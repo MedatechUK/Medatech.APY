@@ -2,21 +2,18 @@
 
 ## About
 
-A Python package of common EDI functions including:
-- Logging 
-- oData connection settings
-- Serialisation
-- web handlers
+A Python package of common EDI functions.
 
 ## Install
-To install this package use
+
+To install this package use:
 ```
 pip install MedatechUK.APY
 ```
 
 ## Imports
 
-### [Logging Class](log.md "Logging Class")
+### [Logging Class](docs/log.md "Logging Class")
 
 A class to create log files.
 
@@ -29,7 +26,7 @@ log.logger.debug("Starting {}".format(__file__))
 
 ```
 
-### [Config Class](oDataConfig.md "Config Class")
+### [Config Class](docs/oDataConfig.md "Config Class")
 
 A class for managing oData settings.
 
@@ -43,11 +40,11 @@ c = Config(	                 # Using this configuration
 
 ```
 
-### [Serial Class](serial.md "Serial Class")
+### [Serial Class](docs/serial.md "Serial Class")
 
 A package for working with serial data.
 
-See also: [Serial object methods](serialmethod.md "Serial object methods")
+See also: [Serial object methods](docs/serialmethod.md "Serial object methods")
 
 ```python
 from MedatechUK.Serial import SerialBase , SerialT , SerialF
@@ -60,11 +57,11 @@ with open('test.json', 'r') as the_file:
 	
 ```
 
-### [APY Class](apy.md "APY Class")
+### [APY Class](docs/apy.md "APY Class")
 
 A class for handling HTTP Request/Response.
 
-See Also: [How to set up IIS](iis.md "How to set up IIS")
+See Also: [How to set up IIS](docs/iis.md "How to set up IIS")
 
 ```python
 from MedatechUK.apy import Request , Response
