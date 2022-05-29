@@ -40,7 +40,7 @@ These rules convert the incoming URL:
 ```
 into a request to:
 ```
-default.py?environment={PRIORITY_COMPANY}&endpoint={SOME+PAGE}
+default.py?environment={PRIORITY_COMPANY}&endpoint={SOME_PAGE}
 ```
 
 Add the following rewrite rules to the web.config.
