@@ -2,14 +2,11 @@
 
 ## About
 
-A Python package of common EDI functions including:
-- Logging 
-- oData connection settings
-- Serialisation
-- web handlers
+A Python package of common EDI functions.
 
 ## Install
-To install this package use
+
+To install this package use:
 ```
 pip install MedatechUK.APY
 ```
