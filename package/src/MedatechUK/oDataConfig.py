@@ -112,3 +112,5 @@ class Config:
                     self.ouser = line.split("=")[1].split('"')[1]
                 if 'OPASS' in line.split("=")[0].upper():
                     self.opass = line.split("=")[1].split('"')[1]                                
+                if 'CONNSTR' in line.split("=")[0].upper():
+                    self.connstr = line.split("=")[1].split('"')[1]                      

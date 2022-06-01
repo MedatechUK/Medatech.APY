@@ -142,12 +142,13 @@ class SerialBase :
         self.form = form
         self.props = {}
         self.log = mLog() 
-        for arg in kwargs.keys():  
-            if arg.upper() == 'XML':     
-                t = xmltodict.parse(kwargs[arg].read())           
-                self = self.__init__(**json.loads(json.dumps(t[list(t)[0]])))
 
-            elif arg.upper() == 'JSON':
+        for arg in kwargs.keys():  
+            if arg.upper() == '_XML':     
+                t = xmltodict.parse(kwargs[arg].read(),dict_constructor=dict)           
+                self = self.__init__(**json.loads(json.dumps(t[list(t)[0]]))) #
+
+            elif arg.upper() == '_JSON':
                 self = self.__init__(**json.loads(kwargs[arg].read()))
 
             elif ( hasattr( self , arg ) ) :
@@ -155,7 +156,12 @@ class SerialBase :
                     setattr( self , arg , kwargs[arg] )
                 except:
                     pass
-    
+            elif ( hasattr( self , arg.lstrip('@') ) ) :
+                try:
+                    setattr( self , arg.lstrip('@') , kwargs[arg] )
+                except e:
+                    print(e)
+
     #endregion
 
     #region "Output Methods"
@@ -180,14 +186,21 @@ class SerialBase :
                 ret += "</"+ type(i).__name__ +">"                                    
             
         else:
-            for key in this.__dict__ :                  
-                if (key != "_props" and key !="form" and key !="log"):                    
-                    if isinstance(this.__dict__[key], list):                              
-                        ret += self.toXML(this.__dict__[key])
-                    
-                    else:
-                        if(hasattr(this,"props")):                            
-                            ret += "<"+ key.lstrip('_') +">"+ str(this.__dict__[key]) +"</"+ key.lstrip('_') +">"
+            for p in range(3):
+                for key in this.__dict__ :                      
+                    if (key != "_props" and key !="form" and key !="log"):
+                        # print("{} {}".format(p,key))
+
+                        if isinstance(this.__dict__[key], list) and p==2:      
+                            ret += self.toXML(this.__dict__[key])
+
+                        elif hasattr(getattr(this , key), "props") and p==1:
+                            if(hasattr(this,"props")):                            
+                                ret += "<"+ key.lstrip('_') +">"+ self.toXML(this.__dict__[key]) +"</"+ key.lstrip('_') +">"
+                            
+                        elif p==0:
+                            if(hasattr(this,"props")) and this.props.__contains__(key.lstrip('_')):
+                                ret += "<"+ key.lstrip('_') +">"+ str(this.__dict__[key]) +"</"+ key.lstrip('_') +">"
                 
         if(l!=0):
             ret +=("</"+ root +">") 
@@ -199,8 +212,11 @@ class SerialBase :
     def toJSON(self):        
         return json.dumps(self, default=lambda o: {
             key.lstrip('_'): 
-            value for key, value in o.__dict__.items() if key !="_props" and key !="form" and key !="log"}, 
-            sort_keys=False, indent=4)   
+            value for key, value in o.__dict__.items() if key !="_props" and key !="form" and key !="log"
+            }, 
+                sort_keys=False, 
+                indent=4
+        )   
 
     def toOdata(self , this = 0):         
         ret = ""  
@@ -258,16 +274,16 @@ class SerialBase :
             l = 1
             this = self
             ret +=("{ ") 
-            ret +=(this.props["bubbleid"].oData(this.form.bubbleid) )  + ", "            
-            ret +=(this.props["typename"].oData(this.form.typename) )  + ", " + chr(34) + "ZODA_LOAD_SUBFORM" + chr(34) + " : ["            
+            if self.form.fname == "ZODA_TRANS" :
+                ret +=(this.props["bubbleid"].oData(this.form.bubbleid) )  + ", "            
+                ret +=(this.props["typename"].oData(this.form.typename) )  + ", " + chr(34) + "ZODA_LOAD_SUBFORM" + chr(34) + " : ["            
 
         if isinstance(this, list):            
             for i in this:                               
-                ret +=self.toFlatOdata(i)    
-                ret += " } "            
-                if(this[-1]!=i):
-                    ret += (",")            
-            
+                ret += self.toFlatOdata(i)                              
+                if(this[-1]!=i) and ret[len(ret)-4:] != " } ,":
+                    ret += (" } ,")
+
         else:
             f = 0
             ret += " { "
@@ -278,20 +294,6 @@ class SerialBase :
                     ret +=(", ")
                 ret +=(this.props["rt"].oData(this.form.rt) ) 
             
-            for key in this.__dict__ :  
-                if (key != "_props" and key !="form" and key !="log"):
-                    if isinstance(this.__dict__[key], list):      
-                        ret+=" } ,"
-                        ret += self.toFlatOdata(this.__dict__[key])
-                    
-                    else:
-                        if(hasattr(this,"props")) and this.props.__contains__(key.lstrip('_')):
-                            if(f==0):
-                                f = 1
-                            else :
-                                ret +=(", ")
-                            ret +=(this.props[key.lstrip('_')].oData(this.__dict__[key]))                        
-            
             # Iterate through readonly properties
             for key in this.props:
                 if (key != "rt" and key !="bubbleid" and key !="typename"):
@@ -300,10 +302,36 @@ class SerialBase :
                             f = 1
                         else :
                             ret +=(", ")
-                        ret +=(this.props[key.lstrip('_')].oData(getattr(this, key)))                  
+                        ret +=(this.props[key.lstrip('_')].oData(getattr(this, key))) 
+
+            for p in range(3):
+                for key in this.__dict__ :                      
+                    if (key != "_props" and key !="form" and key !="log"):
+                        # print("{} {}".format(p,key))
+
+                        if isinstance(this.__dict__[key], list) and p==2:      
+                            if ret[len(ret)-4:] != " } ,":
+                                ret+=" } ,"
+                            ret += self.toFlatOdata(this.__dict__[key])                            
+
+                        elif hasattr(getattr(this , key), "props") and p==1:
+                            if ret[len(ret)-4:] != " } ,":
+                                ret+=" } ,"
+                            ret += self.toFlatOdata(this.__dict__[key])
+                            
+                        elif p==0:
+                            if(hasattr(this,"props")) and this.props.__contains__(key.lstrip('_')):
+                                if(f==0):
+                                    f = 1
+                                else :
+                                    ret +=(", ")
+                                ret +=(this.props[key.lstrip('_')].oData(this.__dict__[key]))                                                 
                 
         if(l!=0):
-            ret += "] }"
+            if ret[len(ret)-4:] == " } ,":
+                ret=ret[0:len(ret)-4]  
+            
+            ret += " } ] }"
 
         return ret
     
@@ -344,7 +372,7 @@ class SerialBase :
 
             # If we're using the oData loading form, send a PATCH
             # to identify that all data has been sent.
-            if self.form.fname == 'ZODA_TRANS':
+            if self.form.fname != 'ZODA_TRANS':
                 self.log.logger.debug("[{}] {}".format( res.status , res.reason ))
                 ret.Status = res.status
                 ret.Message = res.reason
@@ -384,8 +412,8 @@ class SerialBase :
 
                     else:
                         # Create reponse from json 
-                        Response.data = json.load(res)  
-                        self.log.logger.critical( "{}".format( json.dumps(Response.data  , indent = 4 ) ) )
+                        ret.data = json.load(res)  
+                        self.log.logger.critical( "{}".format( json.dumps(ret.data , indent = 4 ) ) )
 
                 else:
                     ## Sucsess!
@@ -393,7 +421,7 @@ class SerialBase :
                     ret.Status = res.status
                     ret.Message = res.reason
                     ret.data = json.load(res)
-                    self.log.logger.debug("Result: {}".format( json.dumps(ret.data  , indent = 4 ) ))
+                    self.log.logger.debug("Result: {}".format( json.dumps(ret.data , indent = 4 ) ))
 
         else:   
             ret.Status = res.status
@@ -412,8 +440,8 @@ class SerialBase :
 
             else:
                 # Create reponse from json 
-                Response.data = json.load(res)  
-                self.log.logger.critical( "{}".format( json.dumps(Response.data  , indent = 4 ) ) )
+                ret.data = json.load(res)  
+                self.log.logger.critical( "{}".format( json.dumps(ret.data  , indent = 4 ) ) )
     
     #endregion
 
