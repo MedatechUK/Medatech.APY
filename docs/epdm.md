@@ -110,6 +110,132 @@ def readConfig(configuration):
 
 ```	
 
+## Program Log File
+
+When we run the program we get the following log file.
+```
+08:43:15 DEBUG Solidworks.py Starting \\walrus\nas\PriorityMobile\python\apy\Solidworks.py
+08:43:27 DEBUG Solidworks.py > oDataConfig.py Opening [\\walrus\nas\PriorityMobile\python\apy\web.config].
+08:43:27 DEBUG Solidworks.py > Serial.py POSTing to [priority.ntsa.uk/odata/priority/tabula.ini/wlnd/ZODA_TRANS] 
+08:43:27 DEBUG Solidworks.py > Serial.py Headers:
+{
+    "Authorization": "Basic YXBpdXNlcjoxMjM0NTY=",
+    "Content-Type": "application/json",
+    "User-Agent": "MedatechUK Python Client"
+}
+08:43:27 DEBUG Solidworks.py > Serial.py Data:
+{
+    "BUBBLEID": "267bb2c3-94f7-4618-96a9-d68fe75e1a30",
+    "TYPENAME": "SW",
+    "ZODA_LOAD_SUBFORM": [
+        {
+            "RECORDTYPE": "1",
+            "TEXT2": "C200",
+            "TEXT3": "EC Cramer CCC452",
+            "TEXT1": "A03"
+        }
+    ]
+}
+08:43:31 DEBUG Solidworks.py > Serial.py [201] OK
+08:43:31 DEBUG Solidworks.py > Serial.py PATCHing to [/odata/priority/tabula.ini/wlnd/ZODA_TRANS(BUBBLEID='267bb2c3-94f7-4618-96a9-d68fe75e1a30',LOADTYPE=10)] ... 
+08:43:31 DEBUG Solidworks.py > Serial.py [200] OK
+08:43:31 DEBUG Solidworks.py > Serial.py Result: {
+    "@odata.context": "https://priority.ntsa.uk/odata/Priority/tabula.ini/wlnd/$metadata#ZODA_TRANS/$entity",
+    "TYPENAME": "SW",
+    "BUBBLEID": "267bb2c3-94f7-4618-96a9-d68fe75e1a30",
+    "CREATEDATE": "2022-06-02T08:43:00+01:00",
+    "COMPLETE": "Y",
+    "COMPLETEDATE": "2022-06-02T08:43:00+01:00",
+    "LOADED": null,
+    "LOADDATE": null,
+    "LINE": 353,
+    "LOADTYPE": 10
+}
+08:43:33 DEBUG Solidworks.py > oDataConfig.py Opening [\\walrus\nas\PriorityMobile\python\apy\web.config].
+08:43:33 DEBUG Solidworks.py > Serial.py POSTing to [priority.ntsa.uk/odata/priority/tabula.ini/wlnd/ZODA_TRANS] 
+08:43:33 DEBUG Solidworks.py > Serial.py Headers:
+{
+    "Authorization": "Basic YXBpdXNlcjoxMjM0NTY=",
+    "Content-Type": "application/json",
+    "User-Agent": "MedatechUK Python Client"
+}
+08:43:33 DEBUG Solidworks.py > Serial.py Data:
+{
+    "BUBBLEID": "c686caa9-4eef-48eb-9424-7fc11970c874",
+    "TYPENAME": "SW",
+    "ZODA_LOAD_SUBFORM": [
+        {
+            "RECORDTYPE": "1",
+            "TEXT2": "EK960",
+            "TEXT3": "Hardener Momentive EK960",
+            "TEXT1": "B01"
+        }
+    ]
+}
+08:43:34 DEBUG Solidworks.py > Serial.py [201] OK
+08:43:34 DEBUG Solidworks.py > Serial.py PATCHing to [/odata/priority/tabula.ini/wlnd/ZODA_TRANS(BUBBLEID='c686caa9-4eef-48eb-9424-7fc11970c874',LOADTYPE=10)] ... 
+08:43:34 DEBUG Solidworks.py > Serial.py [200] OK
+08:43:34 DEBUG Solidworks.py > Serial.py Result: {
+    "@odata.context": "https://priority.ntsa.uk/odata/Priority/tabula.ini/wlnd/$metadata#ZODA_TRANS/$entity",
+    "TYPENAME": "SW",
+    "BUBBLEID": "c686caa9-4eef-48eb-9424-7fc11970c874",
+    "CREATEDATE": "2022-06-02T08:43:00+01:00",
+    "COMPLETE": "Y",
+    "COMPLETEDATE": "2022-06-02T08:43:00+01:00",
+    "LOADED": null,
+    "LOADDATE": null,
+    "LINE": 354,
+    "LOADTYPE": 10
+}
+08:43:34 DEBUG Solidworks.py > oDataConfig.py Opening [\\walrus\nas\PriorityMobile\python\apy\web.config].
+08:43:34 DEBUG Solidworks.py > Serial.py POSTing to [priority.ntsa.uk/odata/priority/tabula.ini/wlnd/ZODA_TRANS] 
+08:43:34 DEBUG Solidworks.py > Serial.py Headers:
+{
+    "Authorization": "Basic YXBpdXNlcjoxMjM0NTY=",
+    "Content-Type": "application/json",
+    "User-Agent": "MedatechUK Python Client"
+}
+08:43:34 DEBUG Solidworks.py > Serial.py Data:
+{
+    "BUBBLEID": "eb86bb06-0560-41f4-8cd7-7ba0fac0d715",
+    "TYPENAME": "SW",
+    "ZODA_LOAD_SUBFORM": [
+        {
+            "RECORDTYPE": "1",
+            "TEXT2": "BOM Test",
+            "TEXT3": "Test",
+            "TEXT1": "A02"
+        },
+        {
+            "RECORDTYPE": "2",
+            "TEXT1": "C200",
+            "REAL1": 0.6
+        },
+        {
+            "RECORDTYPE": "2",
+            "TEXT1": "EK960",
+            "REAL1": 1.0
+        }
+    ]
+}
+08:43:34 DEBUG Solidworks.py > Serial.py [201] OK
+08:43:34 DEBUG Solidworks.py > Serial.py PATCHing to [/odata/priority/tabula.ini/wlnd/ZODA_TRANS(BUBBLEID='eb86bb06-0560-41f4-8cd7-7ba0fac0d715',LOADTYPE=10)] ... 
+08:43:34 DEBUG Solidworks.py > Serial.py [200] OK
+08:43:34 DEBUG Solidworks.py > Serial.py Result: {
+    "@odata.context": "https://priority.ntsa.uk/odata/Priority/tabula.ini/wlnd/$metadata#ZODA_TRANS/$entity",
+    "TYPENAME": "SW",
+    "BUBBLEID": "eb86bb06-0560-41f4-8cd7-7ba0fac0d715",
+    "CREATEDATE": "2022-06-02T08:43:00+01:00",
+    "COMPLETE": "Y",
+    "COMPLETEDATE": "2022-06-02T08:43:00+01:00",
+    "LOADED": null,
+    "LOADDATE": null,
+    "LINE": 355,
+    "LOADTYPE": 10
+}
+
+```
+
 ## Serialising EPDM transactions for Priority:
 
 The ECO() and ECOChild() classes define what fields are sent to Priority.
