@@ -58,10 +58,10 @@ This package checks a folder for files:
 - that is not open by the flie system	
 ```python
     fs = folderWatch(
-        folder="M:\\python\\apy\\SolidWorks\\" , 
+		folder="M:\\python\\apy\\SolidWorks\\" , 
 		ext="xml" ,
-        handler="M:\\python\\apy\\solidworks.exe" , 
-        env="wlnd"  
+		handler="M:\\python\\apy\\solidworks.exe" , 
+		env="wlnd"  
         
     )
 ```
