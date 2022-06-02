@@ -95,3 +95,22 @@ def ProcessRequest(request) :
         } 
 ```
 
+
+### [EPDM Class](https://github.com/MedatechUK/Medatech.APY/blob/main/docs/epdm.md "EPDM Class")
+
+A package for working with EPDM (Solid Works) serial data.
+
+```python
+from MedatechUK.epdm import xmlTransactions
+
+# Load an EPDM file.
+try:
+    with open('example.xml', 'r') as the_file:        
+        q = xmlTransactions(_xml=the_file)
+        for t in q.transactions:
+            recurse(t.document)
+
+except Exception as e:
+    log.logger.critical(str(e))
+	
+```
