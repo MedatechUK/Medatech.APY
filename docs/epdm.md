@@ -10,7 +10,7 @@ from MedatechUK.epdm import xmlTransactions
 
 ## Deserialse EPDM output:
 
-EPDM data descibes a bill of materials, where each part can contain child parts in it's <references> node:
+EPDM data descibes a bill of materials, where each part can contain child parts in it's references node:
 ```xml
 <xml>
   <transactions>
@@ -413,4 +413,5 @@ class ECOChild(SerialBase):
         #endregion
     
     #endregion
-'''        
+
+```
