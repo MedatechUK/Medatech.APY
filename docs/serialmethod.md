@@ -46,7 +46,7 @@ with open('{FILENAME}', 'r') as the_file:
 ### Load from JSON, save as XML
 ```python      
     with open('test.json', 'r') as the_file:        
-        q = order(json=the_file)
+        q = order(_json=the_file)
         # Save to xml
         q.toFile('test2.xml', q.toXML, root="root")
 
