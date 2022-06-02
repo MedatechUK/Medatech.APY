@@ -40,6 +40,20 @@ c = Config(	                 # Using this configuration
 
 ```
 
+### [Command Line Arguments](cl.md "Command Line Arguments")
+
+A package of command line tools, including parsing the [sys.argv](https://docs.python.org/3/library/sys.html "sys.argv") function in Python.
+
+```
+progname.exe -arg value -arg2 "value two"
+```
+
+```
+arg.byName(['arg','a']) = "value"
+arg.byName(['arg2','a2']) = "value two"
+arg.byName(['arg3','a3']) = None
+```
+
 ### [Serial Class](serial.md "Serial Class")
 
 A package for working with serial data.
