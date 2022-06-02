@@ -33,12 +33,12 @@ with open('{FILENAME}', 'r') as the_file:
 |---------------|---------------------------------------|
 |FILENAME| The name of the file to load|
 |OBJECT| The object that will load the data|
-|SERIALTYPE| json OR xml|
+|SERIALTYPE| _json OR _xml|
 
 ### Load from XML, save as JSON
 ```python      
     with open('test2.xml', 'r') as the_file:        
-        q = order(xml=the_file)
+        q = order(_xml=the_file)
         # Save to json
         q.toFile('test2.json', q.toJSON)
 ```
