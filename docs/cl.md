@@ -16,11 +16,13 @@ A named argument can be passed with a - or / prefixed key.
 progname.exe -arg value -arg2 "value two"
 ```
 
-These are accessed by the .byName() method, which accepts an array of possible nameS:
+These are accessed by the .byName() method, which accepts an array of possible names:
 ```
 arg.byName(['arg','a']) = "value"
 arg.byName(['arg2','a2']) = "value two"
+arg.byName(['arg3','a3']) = None
 ```
+Note that a missing argument returns None.
 
 We can also pass unNamed arguments:
 ```
@@ -35,16 +37,16 @@ arg.args()[1] = "SOME VALUE"
 
 And we can combine both types.
 ```python    
-    arg = clArg()
-	
-	# Read command line paramaters as a kwargs.
-    print(arg.kwargs())
-	
-	# Get unnamed arguments by [number]
-    print(arg.args()[0])
-	
-	# Get a named argument, with alternate param names.
-    print(arg.byName(['arg1','a1']))
+arg = clArg()
+
+# Read command line paramaters as a kwargs.
+print(arg.kwargs())
+
+# Get unnamed arguments by [number]
+print(arg.args()[0])
+
+# Get a named argument, with alternate param names.
+print(arg.byName(['arg1','a1']))
 	
 ```
 
@@ -53,13 +55,7 @@ And we can combine both types.
 This package checks a folder for files:
 - in the specified folder
 - of a specified type
-- that is not open by the flie system
-
-For each file found:
-- we run the handler.exe with:
-	- the file found
-	- set environment
-	
+- that is not open by the flie system	
 ```python
     fs = folderWatch(
         folder="M:\\python\\apy\\SolidWorks\\" , 
@@ -69,8 +65,10 @@ For each file found:
         
     )
 ```
-
-Then we can run the check method to process the folder.
+Then we can run the check method to process the folder. For each file found:
+- we run the handler.exe with:
+	- the file found
+	- set environment
 ```python	
     fs.check()
 	
