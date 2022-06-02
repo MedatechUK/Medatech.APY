@@ -2,6 +2,8 @@
 
 This package contains a deserialiser for EPDM (Sold Works) data.
 
+The EDPM deserialiser, and the ECO() and any required ECOChild() classes shown below, use the [Serial Class](serial.md "Serial Class").
+
 ## Imports
 ```python
 from MedatechUK.epdm import xmlTransactions
