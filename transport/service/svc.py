@@ -7,7 +7,6 @@ import os , time , sys
 from os.path import exists
 
 from MedatechUK.cl import folderWatch , clArg
-
 from MedatechUK.mLog import mLog
 
 import settings
