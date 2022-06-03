@@ -26,7 +26,7 @@ We store these settings using a [Serial Class](../../../main/docs/serial.md "Ser
 
 > > > settings ...n
 
-## Creating the settings file
+## Creating the settings file (settings.py)
 
 We can use the following to create and save our setting file.
 ```python
@@ -76,7 +76,7 @@ This creates a settings file:
 
 ```
 
-## The service.
+## The service (svc.py)
 
 When the service starts we load our setting file and use it to create an array of location we are monitoring
 
