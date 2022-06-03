@@ -102,7 +102,7 @@ for w in c.fWatch:
 
 Then, every 15 seconds, we iterate through the array of locations, checking for new files.
 
-Note that the check function is called with the services location, which is passed to the .exe with the -cwd parameter, so logs from the called .exe are routed to the services log, rather than to the location of the .exe.
+Note that the check method of the [folderWatch class](../../../main/docs/cl.md "folderWatch class") is called with the services location, which is passed to the .exe with the -cwd parameter, so logs from the called .exe are routed to the services log, rather than to the location of the .exe.
 ```python
 while not self.stop_requested:
     for w in self.fs:
