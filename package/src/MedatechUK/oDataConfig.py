@@ -66,7 +66,7 @@ class Config:
                     self.SettingfromWebConfig()
                 else:
                     self.log.logger.critical("No settings found in [{}].".format( self.path ))
-                    raise
+                    raise NameError("No settings found in [{}].".format( self.path ))
 
     ## Load setting from the IIS web.config                    
     def SettingfromWebConfig(self):

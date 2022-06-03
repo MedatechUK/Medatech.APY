@@ -11,6 +11,7 @@ from MedatechUK.cl import folderWatch , clArg
 ## clArg:
 This package extends the [sys.argv](https://docs.python.org/3/library/sys.html "sys.argv") function in Python, for capturing parameters from the command line.
 
+### Named Arguments
 A named argument can be passed with a - or / prefixed key. 
 ```
 progname.exe -arg value -arg2 "value two"
@@ -24,7 +25,8 @@ arg.byName(['arg3','a3']) = None
 ```
 Note that a missing argument returns None.
 
-We can also pass unNamed arguments:
+### Positional Arguments
+We can also pass positional arguments:
 ```
 progname.exe "C:\SOMEFILE.TXT" "SOME VALUE"
 ```
@@ -35,7 +37,7 @@ arg.args()[0] = "C:\SOMEFILE.TXT"
 arg.args()[1] = "SOME VALUE"
 ```
 
-And we can combine both types.
+### Combining named and positional arguments
 ```python    
 arg = clArg()
 
@@ -47,6 +49,17 @@ print(arg.args()[0])
 
 # Get a named argument, with alternate param names.
 print(arg.byName(['arg1','a1']))
+	
+```
+
+### Using in a service.
+When using this clArg in a service, you need to pass the args paramater of the service constructor as a paramater to clArg.
+```python
+class MyService(win32serviceutil.ServiceFramework):
+    
+    def __init__(self,args):
+		
+		a = clArg(args=args)
 	
 ```
 

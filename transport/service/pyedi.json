@@ -1,0 +1,16 @@
+{
+    "defaultConfig": "sandbox",
+    "Configs": [
+        {
+            "name": "sandbox",
+            "fWatch": [
+                {
+                    "folder": "\\\\walrus\\nas\\PriorityMobile\\python\\apy\\SolidWorks\\",
+                    "handler": "\\\\walrus\\nas\\PriorityMobile\\python\\apy\\solidworks.exe",
+                    "env": "wlnd",
+                    "ext": "xml"
+                }
+            ]
+        }
+    ]
+}

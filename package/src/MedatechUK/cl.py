@@ -9,11 +9,13 @@ import subprocess
 #region Command Line Arguments            
 class clArg():
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         log = mLog()
         self._kw = {}
         self._a = []
         last = None
+        if kwargs.__contains__("args"):
+            sys.argv = kwargs["args"]            
         for arg in sys.argv[:0:-1] :
             if arg[0] in {'-', '/'} :                
                 while arg[0] in {'-', '/'} :
@@ -51,25 +53,57 @@ class clArg():
 class folderWatch():
     
     def __init__(self , **kwargs):
+        
+        self.log = mLog()
+        
+        #region cl validation
         if not kwargs.__contains__("folder"):
+            self.log.logger.critical("Folder not specified.")
             raise NameError("Folder not specified.")
         if not kwargs.__contains__("handler"):
+            self.log.logger.critical("Handler not specified.")
             raise NameError("Handler not specified.")            
         if not kwargs.__contains__("env"):
+            self.log.logger.critical("Environment not specified.")
             raise NameError("Environment not specified.")                        
         if not exists(kwargs['folder']):
+            self.log.logger.critical("Folder {} not found.".format(kwargs['folder']))
             raise NameError("Folder {} not found.".format(kwargs['folder']))
         if not exists(kwargs['handler']):
+            self.log.logger.critical("handler [{}] not found.".format(kwargs['handler']))
             raise NameError("handler [{}] not found.".format(kwargs['handler']))
 
+        #endregion
+
+        #region Set local properties from commandline
         self._folder = kwargs['folder'].rstrip('\\') + "\\"
         self._handler = kwargs['handler']
-        self._env = kwargs['env']
+        self._env = kwargs['env']        
         
         if not kwargs.__contains__('ext'):
             self._ext = None
-        else :
+            self.log.logger.info("fWatch folder {} with handler {} in env {}.".format(self._folder  , self._handler , self._env ))
+        else :            
             self._ext = kwargs['ext']        
+            self.log.logger.info("fWatch folder {} for {} with handler {} in env {}.".format(self._folder  ,self._ext, self._handler , self._env ))
+
+        #endregion
+
+    def EnvStr(self):
+        return "-e {}".format(self._env)
+
+    def filePath(self,f):
+        return "{}{}".format(self._folder , f)
+
+    def CMD(self, cwd, f):
+        return ( 
+            "{} {} {} {}".format (
+                self._handler ,
+                self.EnvStr() ,
+                "-cwd {}".format(cwd) ,
+                self.filePath(f)        
+            )
+        )
 
     def isFileLocked(self, filePath):
         '''
@@ -110,12 +144,13 @@ class folderWatch():
                 if os.path.splitext(f)[1].lstrip('.').upper()==self._ext.lstrip('.').upper()
                     and not self.isFileLocked(self._folder + '\\' + f)]
     
-    def check(self):
-        for f in self.files():            
+    def check(self, cwd):
+        for f in self.files():   
+            self.log.logger.debug(               
+                self.CMD(cwd , f)
+            )         
             subprocess.call(
-                self._handler + 
-                ' -e' + ' ' + self._env +
-                ' ' + self._folder + f
+                self.CMD(cwd , f)
                 , shell=False
             )
 
@@ -124,11 +159,15 @@ class folderWatch():
 #region Examples
 if __name__ == '__main__' :
 
+    l = mLog()
+    l.start( "C:\pyedi", "DEBUG" )
+    l.logger.debug("Starting {}".format(__file__)) 
+
     ## Get command line arguments
     arg = clArg()
-    print(arg.kwargs())
-    print(arg.args()[0])
-    print(arg.byName(['arg1']))
+    #print(arg.kwargs())
+    #print(arg.args()[0])
+    #print(arg.byName(['arg1']))
 
     ## Watch a folder
     fs = folderWatch(
@@ -137,6 +176,6 @@ if __name__ == '__main__' :
         env="wlnd" , 
         ext="xml"
     )
-    fs.check()
+    fs.check("C:\\pyedi")
 
 #endregion    

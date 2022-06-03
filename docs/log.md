@@ -14,9 +14,16 @@ This logging package is used consisently throughout the other packages in this r
 ```
 
 ## Creating a log
+This example uses [Command Line Arguments](cl.md "Command Line Arguments") to set the current working directory -cwd.
 ```python
-    log = mLog()
-    log.start( os.getcwd(), "DEBUG" )
+    log = mLog()    
+    if arg.byName(["cwd" , "path"]) != None:
+        if not exists(arg.byName(["cwd" , "path"])):
+            raise NameError("Specified working directory {} is missing.".format(arg.byName(["cwd" , "path"])))
+        else:
+            os.chdir(arg.byName(["cwd" , "path"]))
+    
+    log.start( os.getcwd() , "DEBUG" )            
     log.logger.debug("Starting {}".format(__file__))     
 	
 ```
