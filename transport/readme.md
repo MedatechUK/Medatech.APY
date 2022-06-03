@@ -3,7 +3,7 @@
 The following are example projects demonstrating the usage scenarios for this package.
 
 ## [Command Line transport](../../../tree/main/transport/cl "Command Line transport")
-The web transport is an example of using the packages to handle http requests.
+This transport is an example of using the packages to handle command line requests.
 
 ## [Web transport](../../../tree/main/transport/web "web transport")
 The web transport is an example of using the packages to handle http requests.
