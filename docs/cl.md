@@ -68,7 +68,7 @@ class MyService(win32serviceutil.ServiceFramework):
 This package checks a folder for files:
 - in the specified folder
 - of a specified type
-- that is not open by the flie system	
+- that is not open by the file system	
 ```python
     fs = folderWatch(
 		folder="M:\\python\\apy\\SolidWorks\\" , 
@@ -85,4 +85,13 @@ Then we can run the check method to process the folder. For each file found:
 ```python	
     fs.check()
 	
+    def check(self, cwd):
+        for f in self.files():   
+            self.log.logger.debug(               
+                self.CMD(cwd , f)
+            )         
+            subprocess.call(
+                self.CMD(cwd , f)
+                , shell=False
+            )	
 ```
