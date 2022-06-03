@@ -4,6 +4,18 @@
 
 This example expands upon the [EPDM Tutorial](../../../main/docs/epdm.md "EPDM Class") to use [command line arguments](../../../main/docs/cl.md "command line arguments").
 
+We use [pyinstaller](https://pyinstaller.org/ "pyinstaller") to create a .exe file from a python script.
+```
+pip install pyinstaller
+
+pyinstaller --onefile your_program.py
+
+```
+
+When we run our program we want to be able to pass in [command line arguments](../../../main/docs/cl.md "command line arguments"):
+- /cwd {}: The current working directory
+- /env {}: The Priority environment in which to eun the loading
+
 ## Setting the current working directory
 
 We want to use the command line parameter -cwd to set the current working directory:
@@ -55,7 +67,8 @@ except Exception as e:
 	
 ```
 
-## Setting the -env (enviromnet) parameter
+## Setting the -env (environment) parameter
+We can use the arg.byName(['e','env'] methods to find a parameter called EITHER e or env.
 ```python
     # Create an object to hold the result    
     r = Response()    
