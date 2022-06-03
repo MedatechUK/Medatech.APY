@@ -13,11 +13,17 @@ Also we want our service to use the [clArg Class](../../../main/docs/cl.md "clAr
 We store these settings using a [Serial Class](../../../main/docs/serial.md "Serial Class") with this structure:
 
 > defaultconfig name
+
 > > config 1
+
 > > > settings 1
+
 > > > settings ...n
+
 > > config 2
+
 > > > settings 1
+
 > > > settings ...n
 
 ## Creating the settings file
