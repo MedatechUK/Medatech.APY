@@ -2,4 +2,4 @@
 
 ## Introduction
 
-This expands the [EPDM Tutorial](../../../docs/epdm.md "EPDM Class").
+This expands the [EPDM Tutorial](../../../main/docs/epdm.md "EPDM Class").
