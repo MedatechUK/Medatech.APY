@@ -78,7 +78,10 @@ This creates a settings file:
 
 ## The service.
 
-When the service starts we load our setting file and use it to create an array of location we are monitoring:
+When the service starts we load our setting file and use it to create an array of location we are monitoring
+
+Here we use the [clArg Class](../../../main/docs/cl.md "clArg Class") to see if a -mode value was specified, otherwise use the default.
+
 ```python
 with open(self.settingsfile, 'r') as the_file:        
     settings = mySettings(_json=the_file)
@@ -99,7 +102,7 @@ for w in c.fWatch:
 
 Then, every 15 seconds, we iterate through the array of locations, checking for new files.
 
-Note that the check function is called with the services location, which is passed to the .exe as the -cwd parameter, so logs are routed to the services log, rather than the location of the .exe.
+Note that the check function is called with the services location, which is passed to the .exe with the -cwd parameter, so logs from the called .exe are routed to the services log, rather than to the location of the .exe.
 ```python
 while not self.stop_requested:
     for w in self.fs:
