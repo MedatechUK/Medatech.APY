@@ -82,6 +82,7 @@ Then we can run the check method to process the folder. For each file found:
 - we run the handler.exe with:
 	- the file found
 	- set environment
+	- log the file
 ```python	
     fs.check()
 	
@@ -90,8 +91,20 @@ Then we can run the check method to process the folder. For each file found:
             self.log.logger.debug(               
                 self.CMD(cwd , f)
             )         
+						
             subprocess.call(
                 self.CMD(cwd , f)
                 , shell=False
             )	
+```
+The subprocess call runs the following statement:
+			
+```
+\\walrus\nas\PriorityMobile\python\apy\solidworks.exe -e wlnd -cwd C:\pyedi\ \\walrus\nas\PriorityMobile\python\apy\SolidWorks\example.xml
+```
+
+Then we use the **logFile** method of the [logging package](log.md "logging package") to move the file to the \log folder.
+```python
+			self.log.logFile(self.filePath(f))
+
 ```
