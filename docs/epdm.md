@@ -112,6 +112,126 @@ def readConfig(configuration):
 
 ```	
 
+## Serialising EPDM transactions for Priority:
+
+The ECO() and ECOChild() classes define what fields are sent to Priority.
+See also: [Serial Class](serial.md "Serial Class").
+
+### The ECO class
+```python
+class ECO(SerialBase):
+
+    #region Properties
+    @property
+    def child(self): 
+        return self._child
+    @child.setter
+    def child(self, value):
+        self._child = []
+        for i in range(len(value)):
+            if len(value) > 1 :
+                self._child.append(ECOChild(**value[i]))
+
+    @property
+    def Number(self): 
+        return self._Number
+    @Number.setter
+    def Number(self, value):
+        self._Number = value    
+
+... Other epdm properties
+
+    #endregion
+
+    #region "ctor"
+    def __init__(self,  **kwargs): 
+
+        #region "Property defaults"
+        self._Number = ''        
+        self._Part_Family = ''     
+        self._Part_Type = ''
+        self._Description = ''
+        self._Buy__Sell_Unit = ''
+        self._Reference_Count = 0.0
+        self._Conversion_Ratio = 0.0
+        self._Assigned_To = ''
+        self._State = ''
+        self._Code = ''
+        self._Factory_Unit = ''
+        self._ECO_Reason = ''
+        self._ECO_Details = ''
+        self._PDFLocation = ''
+        self._Revision = ''
+        self._child = []
+        
+        #endregion
+
+        #region "Set Meta info"
+        SerialBase.__init__(self , SerialF(fname="ZODA_TRANS", rt=1 , typename="SW") , **kwargs)  
+
+        SerialT(self, "rt")
+        SerialT(self, "bubbleid")
+        SerialT(self, "typename")        
+        SerialT(self, "Revision" , pCol="TEXT1" )
+        SerialT(self, "Number" , pCol="TEXT2" )
+        SerialT(self, "Description" , pCol="TEXT3" )
+   
+        #endregion
+    
+    #endregion
+	
+```
+### The ECO child class
+```Python	
+class ECOChild(SerialBase):
+
+    #region Properties
+    @property
+    def Number(self): 
+        return self._Number
+    @Number.setter
+    def Number(self, value):
+        self._Number = value    
+
+... Other epdm properties
+
+    #endregion
+
+    #region "ctor"
+    def __init__(self,  **kwargs): 
+
+        #region "Property defaults"
+        self._Number = ''        
+        self._Part_Family = ''     
+        self._Part_Type = ''
+        self._Description = ''
+        self._Buy__Sell_Unit = ''
+        self._Reference_Count = 0.0
+        self._Conversion_Ratio = 0.0
+        self._Assigned_To = ''
+        self._State = ''
+        self._Code = ''
+        self._Factory_Unit = ''
+        self._ECO_Reason = ''
+        self._ECO_Details = ''
+        self._PDFLocation = ''
+        self._Revision = ''
+        
+        #endregion
+
+        #region "Set Meta info"
+        SerialBase.__init__(self , SerialF(fname="child", rt=2 ) , **kwargs)  
+
+        SerialT(self, "rt")
+        SerialT(self, "Number" , pCol="TEXT1" )
+        SerialT(self, "Reference_Count" , pCol="REAL1" , pType="REAL")            
+   
+        #endregion
+    
+    #endregion
+
+```
+
 ## Program Log File
 
 When we run the program we get the following [log file](log.md "logging").
@@ -235,124 +355,5 @@ When we run the program we get the following [log file](log.md "logging").
     "LINE": 355,
     "LOADTYPE": 10
 }
-
-```
-
-## Serialising EPDM transactions for Priority:
-
-The ECO() and ECOChild() classes define what fields are sent to Priority.
-
-See also: [Serial Class](serial.md "Serial Class").
-
-```python
-class ECO(SerialBase):
-
-    #region Properties
-    @property
-    def child(self): 
-        return self._child
-    @child.setter
-    def child(self, value):
-        self._child = []
-        for i in range(len(value)):
-            if len(value) > 1 :
-                self._child.append(ECOChild(**value[i]))
-            else :
-                self._child.append(ECOChild(**value))
-
-    @property
-    def Number(self): 
-        return self._Number
-    @Number.setter
-    def Number(self, value):
-        self._Number = value    
-
-... Other epdm properties
-
-    #endregion
-
-    #region "ctor"
-    def __init__(self,  **kwargs): 
-
-        #region "Property defaults"
-        self._Number = ''        
-        self._Part_Family = ''     
-        self._Part_Type = ''
-        self._Description = ''
-        self._Buy__Sell_Unit = ''
-        self._Reference_Count = 0.0
-        self._Conversion_Ratio = 0.0
-        self._Assigned_To = ''
-        self._State = ''
-        self._Code = ''
-        self._Factory_Unit = ''
-        self._ECO_Reason = ''
-        self._ECO_Details = ''
-        self._PDFLocation = ''
-        self._Revision = ''
-        self._child = []
-        
-        #endregion
-
-        #region "Set Meta info"
-        SerialBase.__init__(self , SerialF(fname="ZODA_TRANS", rt=1 , typename="SW") , **kwargs)  
-
-        SerialT(self, "rt")
-        SerialT(self, "bubbleid")
-        SerialT(self, "typename")        
-        SerialT(self, "Revision" , pCol="TEXT1" )
-        SerialT(self, "Number" , pCol="TEXT2" )
-        SerialT(self, "Description" , pCol="TEXT3" )
-   
-        #endregion
-    
-    #endregion
-
-class ECOChild(SerialBase):
-
-    #region Properties
-    @property
-    def Number(self): 
-        return self._Number
-    @Number.setter
-    def Number(self, value):
-        self._Number = value    
-
-... Other epdm properties
-
-    #endregion
-
-    #region "ctor"
-    def __init__(self,  **kwargs): 
-
-        #region "Property defaults"
-        self._Number = ''        
-        self._Part_Family = ''     
-        self._Part_Type = ''
-        self._Description = ''
-        self._Buy__Sell_Unit = ''
-        self._Reference_Count = 0.0
-        self._Conversion_Ratio = 0.0
-        self._Assigned_To = ''
-        self._State = ''
-        self._Code = ''
-        self._Factory_Unit = ''
-        self._ECO_Reason = ''
-        self._ECO_Details = ''
-        self._PDFLocation = ''
-        self._Revision = ''
-        
-        #endregion
-
-        #region "Set Meta info"
-        SerialBase.__init__(self , SerialF(fname="child", rt=2 ) , **kwargs)  
-
-        SerialT(self, "rt")
-        SerialT(self, "Number" , pCol="TEXT1" )
-        SerialT(self, "Reference_Count" , pCol="REAL1" , pType="REAL")            
-   
-        #endregion
-    
-    #endregion
 
 ```
