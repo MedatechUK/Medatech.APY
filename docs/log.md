@@ -55,6 +55,8 @@ This method moves the file to the log in the format log\YYYY-MM\DD\{filename}{-s
 
 If the filename already exists, a numeric suffix is added to the filename before moving.
 
+See also: This method is implimented by the [folderWatch contrl](cl.md "folderWatch contrl").
+
 ## Logging Level Verbosity
 
 From [Python Docs](https://docs.python.org/3/library/logging.html#levels "Python Docs").
