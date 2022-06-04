@@ -16,29 +16,6 @@ When we run our program we want to be able to pass in [command line arguments](.
 - /cwd {}: The current working directory
 - /env {}: The Priority environment in which to eun the loading
 
-## Setting the current working directory
-
-We want to use the command line parameter -cwd to set the current working directory:
-```python
-from MedatechUK.cl import clArg
-
-if __name__ == '__main__':    
-
-    arg = clArg()
-
-    #region "Create a log file"
-    log = mLog()    
-    if arg.byName(["cwd" , "path"]) != None:
-        if not exists(arg.byName(["cwd" , "path"])):
-            raise NameError("Specified working directory {} is missing.".format(arg.byName(["cwd" , "path"])))
-        else:
-            os.chdir(arg.byName(["cwd" , "path"]))
-    
-    log.start( os.getcwd() , "DEBUG" )            
-    log.logger.debug("Starting {}".format(__file__))     
-
-```
-
 ## Validating the command line parameters
 
 ```python
@@ -67,8 +44,33 @@ except Exception as e:
 	
 ```
 
+## Setting the current working directory
+
+We want to use the command line parameter -cwd to set the current working directory:
+```python
+from MedatechUK.cl import clArg
+
+if __name__ == '__main__':    
+
+    arg = clArg()
+
+    #region "Create a log file"
+    log = mLog()    
+    if arg.byName(["cwd" , "path"]) != None:
+        if not exists(arg.byName(["cwd" , "path"])):
+            raise NameError("Specified working directory {} is missing.".format(arg.byName(["cwd" , "path"])))
+        else:
+            os.chdir(arg.byName(["cwd" , "path"]))
+    
+    log.start( os.getcwd() , "DEBUG" )            
+    log.logger.debug("Starting {}".format(__file__))     
+
+```
+
 ## Setting the -env (environment) parameter
 We can use the arg.byName(['e','env'] methods to find a parameter called EITHER e or env.
+
+This is used to set the enviroment of the Priority system with the [Serial Class](../../../main/docs/serial.md "Serial Class")
 ```python
     # Create an object to hold the result    
     r = Response()    
