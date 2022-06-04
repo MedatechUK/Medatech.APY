@@ -51,7 +51,7 @@ Once initialised you can use the log.logger.{VERBOSITY} method anywhere on your 
 
 After processing a file we often want to keep a copy of that file.
 
-This method moves the file to the /log folder.
+This method moves the file to the log in the format log\YYYY-MM\DD\{filename}{-suffix}.{extention}.
 
 If the filename already exists, a numeric suffix is added to the filename before moving.
 
