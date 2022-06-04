@@ -78,7 +78,7 @@ def recurse(document):
 		
 ```
 
-Now, with our part, we create a loading using the ECO() and any required ECOChild() classes, that we send to Priority.
+Now, with our part, we create a [serial loading](serial.md "Serial Class") using the ECO() and any required ECOChild() classes, that we send to Priority.
 ```python
 def readConfig(configuration):
 
@@ -114,7 +114,7 @@ def readConfig(configuration):
 
 ## Program Log File
 
-When we run the program we get the following log file.
+When we run the program we get the following [log file](log.md "logging").
 ```
 08:43:15 DEBUG Solidworks.py Starting \\walrus\nas\PriorityMobile\python\apy\Solidworks.py
 08:43:27 DEBUG Solidworks.py > oDataConfig.py Opening [\\walrus\nas\PriorityMobile\python\apy\web.config].
