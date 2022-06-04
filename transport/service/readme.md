@@ -2,15 +2,45 @@
 
 ## Introduction
 
-Our service is going to use the [folderWatch function](../../../main/docs/cl.md "folderWatch function").
+This example extends the [epdm example](../../../main/docs/epdm.md "epdm example").
 
-First we need some settings that will hold:
+Once we have [built our .exe](../../../main/transports/cl "Command Line Transport"), we need to check for new files to process.
+
+We want this program to keep checking for new file, regardless of if anyone is logged in on the machine. 
+
+To achieve this we need a service.
+
+## Python as a service
+To create a service we first need to install pywin32.
+```
+pip install pywin32
+
+```
+### Install your script as a service.
+```
+py yourscript.py install
+
+```
+### Update changes to your script.
+```
+py yourscript.py install
+
+```
+### Debug your service (with command line parameters).
+```
+py yourscript.py debug -m sandbox
+
+```
+
+## Our Settings file
+
+We want our service to be able to check multiple locations, and be able to define a handler and environment for each location.
+
+So we'll need some settings that will hold:
 - the list of places our service should look for files
 - an instruction about what to do with files that it finds
 
-Also we want our service to use the [clArg Class](../../../main/docs/cl.md "clArg Class") class to pass a -mode value, to allow us to specify which configuration we want to use (live or sandbox).
-
-We store these settings using a [Serial Class](../../../main/docs/serial.md "Serial Class") with this structure:
+We're going to store these settings using a [Serial Class](../../../main/docs/serial.md "Serial Class") with this structure:
 
 > defaultconfig name
 
@@ -26,9 +56,13 @@ We store these settings using a [Serial Class](../../../main/docs/serial.md "Ser
 
 > > > settings ...n
 
-## Creating the settings file (settings.py)
+## Folder monitoring
+We're going to monitor for new files using the [folderWatch package](../../../main/docs/cl.md#folderWatch "folderWatch package").
 
-We can use the following to create and save our setting file.
+Also we want our service to use the [clArg Class](../../../main/docs/cl.md "clArg Class") class to pass a -mode value, to allow us to specify which configuration we want to use (live or sandbox).
+
+## Constructing the settings file (settings.py)
+We can use the following Python code to create an instance of our setting class, and [save our settings file](../../../main/docs/serialmethods.md "Serial Package").
 ```python
 if __name__ == '__main__': 
 
@@ -78,9 +112,9 @@ This creates a settings file:
 
 ## The service (svc.py)
 
-When the service starts we load our setting file and use it to create an array of location we are monitoring
+When the service starts we load our setting file and use it to create an array of locations to monitor.
 
-Here we use the [clArg Class](../../../main/docs/cl.md "clArg Class") to see if a -mode value was specified, otherwise use the default.
+Here we are using the [clArg Class](../../../main/docs/cl.md "clArg Class") to see if a -mode value was specified, otherwise use the default.
 
 ```python
 with open(self.settingsfile, 'r') as the_file:        
@@ -102,7 +136,7 @@ for w in c.fWatch:
 
 Then, every 15 seconds, we iterate through the array of locations, checking for new files.
 
-Note that the check method of the [folderWatch class](../../../main/docs/cl.md "folderWatch class") is called with the services location, which is passed to the .exe with the -cwd parameter, so logs from the called .exe are routed to the services log, rather than to the location of the .exe.
+Note that the check method of the [folderWatch package](../../../main/docs/cl.md#folderWatch "folderWatch package") is called with the services location, which is passed to the .exe with the -cwd parameter, so logs from the called .exe are routed to the log of the service, rather than to the location of the .exe.
 ```python
 while not self.stop_requested:
     for w in self.fs:
