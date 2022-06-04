@@ -55,7 +55,7 @@ This method moves the file to the log in the format log\YYYY-MM\DD\{filename}{-s
 
 If the filename already exists, a numeric suffix is added to the filename before moving.
 
-See also: This method is implimented by the [folderWatch contrl](cl.md "folderWatch contrl").
+See also: This method is implimented by the [folderWatch control](cl.md#folderWatch "folderWatch control").
 
 ## Logging Level Verbosity
 
