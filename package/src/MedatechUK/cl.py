@@ -153,6 +153,7 @@ class folderWatch():
                 self.CMD(cwd , f)
                 , shell=False
             )
+            self.log.logFile(self.filePath(f))
 
 #endregion
 
