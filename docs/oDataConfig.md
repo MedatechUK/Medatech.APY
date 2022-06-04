@@ -1,6 +1,6 @@
 # oDataConfig.py
 
-This package returns a Config Object containinig settingd for Priority Odata.
+This package returns a **Config Object** containing settings for Priority Odata.
 
 It loads a configuration file containg the oData settings from *either*:
 - the IIS web.config file
