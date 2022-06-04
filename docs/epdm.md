@@ -4,7 +4,7 @@ This package contains a deserialiser for EPDM (Sold Works) data.
 
 The EDPM deserialiser, and the ECO() and ECOChild() classes shown below, inherit from the [Serial Class](serial.md "Serial Class").
 
-See also: [Adding command line parameters to EPDM example](../transport/cl)"Serial Class")
+See also: [Adding command line parameters to EPDM example](../transport/cl "Serial Class").
 
 ## Imports
 ```python
