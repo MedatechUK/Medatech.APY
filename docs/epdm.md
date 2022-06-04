@@ -241,6 +241,9 @@ When we run the program we get the following [log file](log.md "logging").
 ## Serialising EPDM transactions for Priority:
 
 The ECO() and ECOChild() classes define what fields are sent to Priority.
+
+See also: [Serial Class](serial.md "Serial Class").
+
 ```python
 class ECO(SerialBase):
 
