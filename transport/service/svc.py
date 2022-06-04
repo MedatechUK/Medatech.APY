@@ -7,9 +7,165 @@ import os , time , sys
 from os.path import exists
 
 from MedatechUK.cl import folderWatch , clArg
+from MedatechUK.Serial import SerialBase , SerialT , SerialF
 from MedatechUK.mLog import mLog
 
-import settings
+#region Settings Serialiser
+
+class mySettings(SerialBase) :
+
+    #region Properties
+    @property
+    def defaultConfig(self):    
+        return self._defaultConfig
+    @defaultConfig.setter
+    def defaultConfig(self, value):
+        self._defaultConfig = value
+
+    @property
+    def Configs(self):    
+        return self._Configs
+    @Configs.setter
+    def Configs(self, value):
+        self._Configs = []   
+        for i in range(len(value)):
+            try:
+                self._Configs.append(Config(**value[i]))
+            except:
+                self._Configs.append(Config(**value))  
+
+    #endregion
+
+    #region "ctor"
+    def __init__(self,  **kwargs): 
+
+        #region "Property defaults"
+        self.defaultConfig = ""
+        self._Configs = []  
+
+        #endregion  
+
+        #region "Set Meta info"
+        SerialBase.__init__(self , SerialF(fname="ZODA_TRANS"), **kwargs)  
+
+        #endregion
+    
+    #endregion
+
+    #region Methods
+    def byName(self, Name):
+        for c in self._Configs:
+            if c.name.upper() == Name.upper():
+                return c
+        return None
+
+    #endregion
+
+class Config(SerialBase) :
+
+    #region Properties
+    @property
+    def name(self):    
+        return self._name
+    @name.setter
+    def name(self, value):
+        self._name = value
+
+    @property
+    def fWatch(self):    
+        return self._fWatch
+    @fWatch.setter
+    def fWatch(self, value):
+        self._fWatch = []   
+        for i in range(len(value)):
+            try:
+                self._fWatch.append(fWatch(**value[i]))
+            except:
+                self._fWatch.append(config(**value))  
+
+    #endregion
+
+    #region "ctor"
+    def __init__(self,  **kwargs): 
+
+        #region "Property defaults"
+        self.name = ""
+        self._fWatch = []   
+
+        #endregion  
+
+        #region "Set Meta info"
+        SerialBase.__init__(self , SerialF(fname="ZODA_TRANS"), **kwargs)  
+
+        #endregion
+    
+    #endregion
+
+class fWatch(SerialBase) :
+
+    #region Properties
+    @property
+    def folder(self):    
+        return self._folder
+    @folder.setter
+    def folder(self, value):
+        self._folder = value
+
+    @property
+    def handler(self): 
+        return self._handler
+    @handler.setter
+    def handler(self, value):
+        self._handler = value   
+
+    @property
+    def env(self): 
+        return self._env
+    @env.setter
+    def env(self, value):
+        self._env = value   
+
+    @property
+    def ext(self): 
+        return self._ext
+    @ext.setter
+    def ext(self, value):
+        self._ext = value   
+
+    #endregion
+
+    #region "ctor"
+    def __init__(self,  **kwargs): 
+
+        #region "Property defaults"
+        self.folder = ""
+        self.handler = ""
+        self.env = ""
+        self.ext = ""
+
+        #endregion  
+
+        #region "Set Meta info"
+        SerialBase.__init__(self , SerialF(fname="ZODA_TRANS"), **kwargs)  
+
+        #endregion
+    
+    #endregion
+
+    #region Methods
+    def kwargs(self):
+        kw = {}
+        kw["folder"] = self.folder 
+        kw["handler"] = self.handler 
+        kw["env"] = self.env 
+        kw["ext"] = self.ext 
+        return kw
+
+    #end region
+
+#endregion
+
+#endregion
 
 class AppServerSvc (win32serviceutil.ServiceFramework):
     
@@ -18,9 +174,13 @@ class AppServerSvc (win32serviceutil.ServiceFramework):
 
     def __init__(self,args):
         
+        #region Create Log
         self.log = mLog()
         self.log.start( os.path.abspath(os.path.dirname(__file__)), "DEBUG" )
         self.log.logger.debug("Starting {}".format(__file__))          
+        
+        #endregion
+        
         self.args = clArg(args=args)
         self.settingsfile = "{}\\{}.json".format(            
             os.path.abspath(
