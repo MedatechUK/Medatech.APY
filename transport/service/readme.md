@@ -23,7 +23,7 @@ py yourscript.py install
 ```
 ### Update changes to your script.
 ```
-py yourscript.py install
+py yourscript.py update
 
 ```
 ### Debug your service (with command line parameters).
