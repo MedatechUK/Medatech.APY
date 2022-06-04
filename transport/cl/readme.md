@@ -16,6 +16,12 @@ When we run our program we want to be able to pass in [command line arguments](.
 - /cwd {}: The current working directory
 - /env {}: The Priority environment in which to eun the loading
 
+## Imports
+```python
+from MedatechUK.cl import clArg
+
+```
+
 ## Validating the command line parameters
 
 ```python
@@ -48,7 +54,6 @@ except Exception as e:
 
 We want to use the command line parameter -cwd to set the current working directory:
 ```python
-from MedatechUK.cl import clArg
 
 if __name__ == '__main__':    
 
