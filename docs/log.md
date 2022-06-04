@@ -47,6 +47,14 @@ Once initialised you can use the log.logger.{VERBOSITY} method anywhere on your 
 | Verbosity	|The Logging Level of the message (see Verbosity Settings below) |
 | Message	|The text to be written to the logfile |
 
+### log.logfile( {file_name} )
+
+After processing a file we often want to keep a copy of that file.
+
+This method moves the file to the /log folder.
+
+If the filename already exists, a numeric suffix is added to the filename before moving.
+
 ## Logging Level Verbosity
 
 From [Python Docs](https://docs.python.org/3/library/logging.html#levels "Python Docs").
