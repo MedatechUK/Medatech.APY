@@ -4,7 +4,7 @@ This package defines:
 - a Request object that is passed to the *ProcessRequest()* method of a handler.
 - a Response object that can be edited to provide an appropriate response (http status , message and data) to the Request
 
-To set up your IIS to create handlers, see the *[IIS config](iis.md "IIS config")*.
+To set up your IIS to create handlers, see the *[IIS config](iis.md "IIS config")* FIRST!
 
 ## Imports
 ```python
@@ -34,7 +34,7 @@ def ProcessRequest(request) :
 
 The following POST handler:
 - uses a *[Serial Object](serial.md "Serial Object")* to decode the request
-- gets the *[Configuration](serial.md "Config Object")* from the web server
+- gets the *[Configuration](oDataConfig.md "Config Object")* from the web server
 - adds error handling and *[Logging](log.md "mlog Object")*
 
 ```python
