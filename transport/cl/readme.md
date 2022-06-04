@@ -13,8 +13,8 @@ pyinstaller --onefile your_program.py
 ```
 
 When we run our program we want to be able to pass in [command line arguments](../../../main/docs/cl.md "command line arguments"):
-- /cwd {}: The current working directory
-- /env {}: The Priority environment in which to eun the loading
+- /cwd {The current working directory}
+- /env {The Priority environment in which to eun the loading}
 
 ## Imports
 ```python
@@ -23,7 +23,7 @@ from MedatechUK.cl import clArg
 ```
 
 ## Validating the command line parameters
-
+Before we do anything, we must verify that we have required parameters and that referenced files exist.
 ```python
 try:     
 
@@ -53,6 +53,8 @@ except Exception as e:
 ## Setting the current working directory
 
 We want to use the command line parameter -cwd to set the current working directory:
+
+We can use the arg.byName(['cwd','path'] methods to find a parameter called EITHER cwd or path.
 ```python
 
 if __name__ == '__main__':    
@@ -73,9 +75,12 @@ if __name__ == '__main__':
 ```
 
 ## Setting the -env (environment) parameter
+
+We want to use the command line parameter -env to set the Priority company for the loading:
+
 We can use the arg.byName(['e','env'] methods to find a parameter called EITHER e or env.
 
-This is used to set the enviroment of the Priority system with the [Serial Class](../../../main/docs/serial.md "Serial Class")
+This is used to set the enviroment of the Priority system with the [Serial Class](../../../main/docs/serial.md "Serial Class").
 ```python
     # Create an object to hold the result    
     r = Response()    
@@ -95,3 +100,5 @@ This is used to set the enviroment of the Priority system with the [Serial Class
     )
 	
 ```
+
+See also: [Running the EPDM as a service.](../../../main/transport/service "Service Transport").
