@@ -105,6 +105,6 @@ The subprocess call runs the following statement:
 
 Then we use the **logFile** method of the [logging package](log.md "logging package") to move the file to the \log folder.
 ```python
-		sself.log.logFile(self.filePath(f))
+		self.log.logFile(self.filePath(f))
 
 ```
