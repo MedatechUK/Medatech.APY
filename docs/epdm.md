@@ -131,6 +131,8 @@ class ECO(SerialBase):
         for i in range(len(value)):
             if len(value) > 1 :
                 self._child.append(ECOChild(**value[i]))
+            else :
+                self._child.append(ECOChild(**value))
 
     @property
     def Number(self): 
