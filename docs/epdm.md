@@ -48,7 +48,7 @@ EPDM data descibes a bill of materials, where each part can contain child parts 
 
 ```
 
-Using the epdm class we can deserialise the EPDM data and begin stepping through the heirarachy of documets.
+Using the epdm package we can [deserialise](serial.md "Serial Class") the EPDM data from a file, and begin stepping through the heirarachy of documets.
 ```python
 if __name__ == '__main__':    
        
