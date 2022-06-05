@@ -68,7 +68,7 @@ We're going to store these settings using a [Serial Class](../../../main/docs/se
 > > > settings ...n
 
 ### Constructing the settings file (settings.py)
-We can use the following Python code to create an instance of our setting class, and [save our settings file](../../../main/docs/serialmethods.md "Serial Package").
+We can use the following Python code to create an instance of our setting class, and [save our settings file](../../../main/docs/serialmethod.md "Serial Package").
 ```python
 if __name__ == '__main__': 
 
