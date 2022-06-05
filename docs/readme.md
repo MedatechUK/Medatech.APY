@@ -48,10 +48,11 @@ A package of command line tools, including parsing the [sys.argv](https://docs.p
 progname.exe -arg value -arg2 "value two"
 ```
 
-```
+```python
 arg.byName(['arg','a']) = "value"
 arg.byName(['arg2','a2']) = "value two"
 arg.byName(['arg3','a3']) = None
+
 ```
 
 ### [Serial Class](serial.md "Serial Class")
@@ -95,18 +96,8 @@ def ProcessRequest(request) :
     
     except Exception as e:
         log.logger.critical(str(e))
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]        
-        request.response.Status = 500
-        request.response.Message = "Internal Server Error"
-        request.response.data ={ "error" :
-            {
-                "type": exc_type,
-                "message": str(e),
-                "script": fname,
-                "line": exc_tb.tb_lineno
-            }
-        } 
+...
+
 ```
 
 

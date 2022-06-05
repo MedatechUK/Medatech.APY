@@ -95,18 +95,8 @@ def ProcessRequest(request) :
     
     except Exception as e:
         log.logger.critical(str(e))
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]        
-        request.response.Status = 500
-        request.response.Message = "Internal Server Error"
-        request.response.data ={ "error" :
-            {
-                "type": exc_type,
-                "message": str(e),
-                "script": fname,
-                "line": exc_tb.tb_lineno
-            }
-        } 
+ ...
+ 
 ```
 
 ### [EPDM Class](docs/epdm.md "EPDM Class")
