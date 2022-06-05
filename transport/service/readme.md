@@ -4,7 +4,7 @@
 
 This example extends the [epdm example](../../../main/docs/epdm.md "epdm example").
 
-Once we have built our [.exe](../../../../tree/main/transport/cl "Command Line Transport"), we need a progam that will check for new files to process and pass them to our EPDM program for processing.
+Once we have built our [.exe](../../../../tree/main/transport/cl "Command Line Transport"), we need a progam that will check for new files and pass them to our EPDM program for processing.
 
 We want this program to keep checking for new files, regardless if anyone is logged in on the machine. 
 
