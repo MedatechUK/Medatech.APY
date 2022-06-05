@@ -14,8 +14,6 @@ Read more about creating handlers [here](../../../main/docs/apy.md "python apy")
 
 ## The iis configuraation (web.Config)
 
-Read more about the [IIS web.Config](http://go.microsoft.com/fwlink/?LinkId=235367 "IIS web.Config").
-
 ### Add Python CGI
 Specify the location of the Python binary as the scriptProcessor.
 ```xml
