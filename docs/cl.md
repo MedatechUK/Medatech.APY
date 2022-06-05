@@ -70,26 +70,29 @@ This package checks a folder for files:
 - in the specified folder
 - of a specified type
 - that is not open by the file system	
+
+### Construct a folderWatch
 ```python
     fs = folderWatch(
-		folder="M:\\python\\apy\\SolidWorks\\" , 
-		ext="xml" ,
-		handler="M:\\python\\apy\\solidworks.exe" , 
-		env="wlnd"  
+	   folder="M:\\python\\apy\\SolidWorks\\" ,  	## The folder to monitor
+	   ext="xml" ,									## For files of type
+	   handler="M:\\python\\apy\\solidworks.exe" , 	## Run this handler exe
+	   env="wlnd"  									## And pass this -env parameter
         
     )
 ```
+
+### The check() method
 Then we can run the check method to check for new files in the specified folder. 
 ```python
 fs.check()
 
 ```
 
-For each file found we want to:
-- we run the handler.exe with:
-	- the file found
-	- set -env environment
-	- copy the file to the /log after processing
+For each file found by the folderWatch, we want to run the handler exe with the following parameters:
+- the file found
+- the -env environment
+And then move the file to the /log after processing
 
 The check method spawns a handler process for each file found.
 ```python	   	
@@ -111,7 +114,7 @@ The subprocess call runs the a prgram in the format:
 \\walrus\nas\PriorityMobile\python\apy\solidworks.exe -e wlnd -cwd C:\pyedi\ \\walrus\nas\PriorityMobile\python\apy\SolidWorks\example.xml
 ```
 
-Then we use the **logFile** method of the [logging package](log.md "logging package") to move the file to the \log folder.
+Then folderWatch uses the **logFile** method of the [logging package](log.md "logging package") to move the processed file to the \log folder.
 ```python
             self.log.logFile(self.filePath(f))
 
