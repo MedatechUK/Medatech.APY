@@ -19,13 +19,13 @@ Specify the location of the Python binary as the scriptProcessor.
 ```xml
 <handlers>
     <add 
-	  	name="Python" 
-		path="*.py" 
-		verb="*" 
-		modules="CgiModule" 
-		scriptProcessor="&quot;c:\Program Files\Python39\python.exe&quot; %s %s" 
-		resourceType="File" 
-		requireAccess="Script" 
+     name="Python" 
+     path="*.py" 
+     verb="*" 
+     modules="CgiModule" 
+     scriptProcessor="&quot;c:\Program Files\Python39\python.exe&quot; %s %s" 
+     resourceType="File" 
+     requireAccess="Script" 
 	/>
 </handlers>
 ```
