@@ -150,7 +150,7 @@ while not self.stop_requested:
             time.sleep(.1)
 ```
 
-## The log file of the service
+## The [log](../../../main/docs/log.md "logging package") file of the service
 ```
 12:58:16 DEBUG svc.py Starting C:\pyedi\svc.py
 12:58:16 DEBUG svc.py Opening settings file C:\pyedi\pyEDI.json
