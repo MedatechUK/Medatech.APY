@@ -12,7 +12,7 @@ The default is the landing page that creates an request object for your handler.
 
 Read more about creating handlers [here](../../../main/docs/apy.md "python apy").
 
-## The iis configuraation (web.Config)
+## The iis web server configuration (web.Config)
 
 ### Add Python CGI
 Specify the location of the Python binary as the scriptProcessor.
