@@ -75,7 +75,7 @@ with open('test.json', 'r') as the_file:
 
 A class for handling HTTP Request/Response.
 
-See Also: [How to set up IIS](iis.md "How to set up IIS")
+See Also: the [http transport example](../transport/web "http Transport")
 
 ```python
 from MedatechUK.apy import Request , Response
