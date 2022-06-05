@@ -79,7 +79,7 @@ This package checks a folder for files:
         
     )
 ```
-Then we can run the check method to check for new files the folder. 
+Then we can run the check method to check for new files in the specified folder. 
 ```python
 fs.check()
 
