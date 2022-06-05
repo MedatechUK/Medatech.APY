@@ -75,9 +75,9 @@ This package checks a folder for files:
 ```python
     fs = folderWatch(
 	   folder="M:\\python\\apy\\SolidWorks\\" ,  	## The folder to monitor
-	   ext="xml" ,									## For files of type
+	   ext="xml" ,						## For files of type
 	   handler="M:\\python\\apy\\solidworks.exe" , 	## Run this handler exe
-	   env="wlnd"  									## And pass this -env parameter
+	   env="wlnd"  						## And pass this -env parameter
         
     )
 ```
@@ -107,13 +107,16 @@ The check method spawns a handler process for each file found.
                 , shell=False
             )	
 ```
-The subprocess call runs the a prgram in the format:
-
-{hander_exe} -e {environment} -cwd {current_working_directory} {file_to_process}, e.g.:			
+The subprocess call runs the the handler program with a shell command like:
+```
+{hander_exe} -e {environment} -cwd {current_working_directory} {file_to_process}, 
+```
+e.g.:
 ```
 \\walrus\nas\PriorityMobile\python\apy\solidworks.exe -e wlnd -cwd C:\pyedi\ \\walrus\nas\PriorityMobile\python\apy\SolidWorks\example.xml
 ```
 
+## Moving the processed file to the /log
 Then folderWatch uses the **logFile** method of the [logging package](log.md "logging package") to move the processed file to the \log folder.
 ```python
             self.log.logFile(self.filePath(f))
