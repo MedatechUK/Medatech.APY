@@ -70,7 +70,7 @@ Add the following rewrite rules to the web.config.
 
 ### Set oData settings
 
-Finally, configure the oData setting in the appSetting. See [oData Configuration](oDataConfig.md "oData Configuration").
+Finally, configure the oData setting in the appSetting. See [oData Configuration](../../../main/docs/oDataConfig.md "oData Configuration").
 ```xml
   <appSettings>
     <add key="oDataHost" value="https://priority.someurl" />
