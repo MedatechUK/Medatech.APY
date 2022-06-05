@@ -80,16 +80,16 @@ This package checks a folder for files:
     )
 ```
 Then we can run the check method to check for new files the folder. 
+```python
+fs.check()
 
-For each file found:
+```
+
+For each file found we want to:
 - we run the handler.exe with:
 	- the file found
 	- set -env environment
-	- then copy the file to the /log
-
-```python
-fs.check()
-```
+	- copy the file to the /log after processing
 
 The check method spawns a handler process for each file found.
 ```python	   	
