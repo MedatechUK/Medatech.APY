@@ -4,11 +4,11 @@
 
 This example extends the [epdm example](../../../main/docs/epdm.md "epdm example").
 
-Once we have [built our .exe](../../../../tree/main/transport/cl "Command Line Transport"), we need to check for new files to process.
+Once we have built our [.exe](../../../../tree/main/transport/cl "Command Line Transport"), we need a progam that will check for new files to process and pass them to our EPDM program for processing.
 
 We want this program to keep checking for new files, regardless if anyone is logged in on the machine. 
 
-To do this we need to use a Windows service. Service are terminate and stay resident programs, managed by Windows.
+To do this we need to use a Windows service. Services are terminate and stay resident programs, managed by Windows.
 
 ## Python as a service
 To create a service we first need to install pywin32.
@@ -67,7 +67,7 @@ We're going to store these settings using a [Serial Class](../../../main/docs/se
 
 > > > settings ...n
 
-## Constructing the settings file (settings.py)
+### Constructing the settings file (settings.py)
 We can use the following Python code to create an instance of our setting class, and [save our settings file](../../../main/docs/serialmethods.md "Serial Package").
 ```python
 if __name__ == '__main__': 
