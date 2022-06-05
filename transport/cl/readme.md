@@ -1,162 +1,104 @@
-# Python Service Transport
+# Command Line transport
 
 ## Introduction
 
-This example extends the [epdm example](../../../main/docs/epdm.md "epdm example").
+This example expands upon the [EPDM Tutorial](../../../main/docs/epdm.md "EPDM Class") to use [command line arguments](../../../main/docs/cl.md "command line arguments").
 
-Once we have built our [.exe](../../../../tree/main/transport/cl "Command Line Transport"), we need a progam that will check for new files to process and pass them to our EPDM program for processing.
+We use [pyinstaller](https://pyinstaller.org/ "pyinstaller") to create a .exe file from a python script.
+```
+pip install pyinstaller
 
-We want this program to keep checking for new files, regardless if anyone is logged in on the machine. 
-
-To do this we need to use a Windows service. Services are terminate and stay resident programs, managed by Windows.
-
-## Python as a service
-To create a service we first need to install pywin32.
-```
-pip install pywin32
-
-```
-### Install your script as a service.
-```
-py yourscript.py install
-
-```
-### Update changes to your script.
-```
-py yourscript.py update
-
-```
-### Debug your service (with command line parameters).
-```
-py yourscript.py debug -m sandbox
+pyinstaller --onefile your_program.py
 
 ```
 
-## Folder monitoring
-We're going to monitor for new files using the [folderWatch package](../../../main/docs/cl.md#folderWatch "folderWatch package").
+When we run our program we want to be able to pass in the following [command line arguments](../../../main/docs/cl.md "command line arguments"):
+- /cwd {The current working directory}
+- /env {The Priority environment in which to run the loading}
 
-Also we want our service to use the [clArg Class](../../../main/docs/cl.md "clArg Class") class to pass a -mode value, to allow us to specify which configuration we want to use (live or sandbox).
-
-## Our Settings file
-
-We want our service to be able to check multiple locations, and be able to define a handler and environment for each location.
-
-So we'll need some settings that will hold:
-- the list of places our service should look for files
-- an instruction about what to do with files that it finds
-
-We're going to store these settings using a [Serial Class](../../../main/docs/serial.md "Serial Class") with this structure:
-
-> defaultconfig name
-
-> > config 1
-
-> > > settings 1
-
-> > > settings 2
-
-> > > settings ...n
-
-> > config 2
-
-> > > settings 1
-
-> > > settings 2
-
-> > > settings 3
-
-> > > settings ...n
-
-### Constructing the settings file (settings.py)
-We can use the following Python code to create an instance of our setting class, and [save our settings file](../../../main/docs/serialmethod.md "Serial Package").
+## Imports
 ```python
-if __name__ == '__main__': 
-
-    # Create a Setting file.
-    q = mySettings(defaultConfig="sandbox")
-    q.Configs.append(Config(name="sandbox"))
-    q.Configs[-1].fWatch.append(
-        fWatch(
-            folder="\\\\walrus\\nas\\PriorityMobile\\python\\apy\\SolidWorks\\" , 
-            handler="\\\\walrus\\nas\\PriorityMobile\\python\\apy\\solidworks.exe" , 
-            env="wlnd" , 
-            ext="xml"
-        )
-    )    
-
-    # Save the setting file.
-    print(q.toJSON())
-    q.toFile(
-        "{}\{}.json".format(
-            os.path.abspath(
-                os.path.dirname(__file__).rstrip("\\")
-            ) , "pyEDI"
-        ) , q.toJSON
-    )    
-```
-
-This creates a settings file:
-```json
-{
-    "defaultConfig": "sandbox",
-    "Configs": [
-        {
-            "name": "sandbox",
-            "fWatch": [
-                {
-                    "folder": "\\\\walrus\\nas\\PriorityMobile\\python\\apy\\SolidWorks\\",
-                    "handler": "\\\\walrus\\nas\\PriorityMobile\\python\\apy\\solidworks.exe",
-                    "env": "wlnd",
-                    "ext": "xml"
-                }
-            ]
-        }
-    ]
-}
+from MedatechUK.cl import clArg
 
 ```
 
-## The service (svc.py)
-
-When the service starts we load our setting file and use it to create an array of locations to monitor.
-
-Here we are using the [clArg Class](../../../main/docs/cl.md "clArg Class") to see if a -mode value was specified, otherwise use the default.
-
+## Validating the command line parameters
+Before we do anything, we must verify that we have required parameters and that referenced files exist.
 ```python
-with open(self.settingsfile, 'r') as the_file:        
-    settings = mySettings(_json=the_file)
-    if self.args.byName(["m","mode"]) == None:
-        # Use the default config if none is specified on the command line
-        c = settings.byName(settings.defaultConfig)
-    else :
-        # Use the specified mode
-        c = settings.byName(self.args.byName(["m","mode"]))
-    # Check mode exists
-    if c == None:
-        raise NameError("Mode [{}] does not exist.".format( self.args.byName(["m","mode"]) ) )
+try:     
 
-for w in c.fWatch:
-    self.fs.append(folderWatch(**w.kwargs()))
+    #region Check Arguments   
+    if len(arg.args()) == 0 :
+        raise NameError("No file specified.")
 
+    if not exists(arg.args()[0]):
+        raise NameError("File {} does not exist.".format(arg.args()[0]))
+
+    if arg.byName(["e" , "env"]) == None:
+        raise NameError("No environment specified.")
+
+    #endregion
+
+    with open(arg.args()[0], 'r') as the_file:        
+        q = xmlTransactions(_xml=the_file)
+        for t in q.transactions:
+            recurse(t.document)
+
+except Exception as e:
+    log.logger.critical(str(e))
+    print(e)
+	
 ```
 
-Then, every 15 seconds, we iterate through the array of locations, checking for new files.
+## Setting the current working directory
 
-Note that the check method of the [folderWatch package](../../../main/docs/cl.md#folderWatch "folderWatch package") is called with the services location, which is passed to the .exe with the -cwd parameter, so logs from the called .exe are routed to the log of the service, rather than to the location of the .exe.
+We want to use the command line parameter -cwd to set the current working directory:
+
+We can use the arg.byName(['cwd','path'] methods to find a parameter called EITHER cwd or path.
 ```python
-while not self.stop_requested:
-    for w in self.fs:
-        try:
-            w.check(            
-                os.path.abspath(
-                    os.path.dirname(__file__).rstrip("\\")
-                )
-            )
 
-        except Exception as e:
-            self.log.logger.warning(str(e))
-                    
-    for i in range(150):
-        if not self.stop_requested:
-            time.sleep(.1)
+if __name__ == '__main__':    
+
+    arg = clArg()
+
+    #region "Create a log file"
+    log = mLog()    
+    if arg.byName(["cwd" , "path"]) != None:
+        if not exists(arg.byName(["cwd" , "path"])):
+            raise NameError("Specified working directory {} is missing.".format(arg.byName(["cwd" , "path"])))
+        else:
+            os.chdir(arg.byName(["cwd" , "path"]))
+    
+    log.start( os.getcwd() , "DEBUG" )            
+    log.logger.debug("Starting {}".format(__file__))     
+
 ```
+
+## Setting the -env (environment) parameter
+
+We want to use the command line parameter -env to set the Priority company for the loading:
+
+We can use the arg.byName(['e','env'] methods to find a parameter called EITHER e or env.
+
+This is used to set the enviroment of the Priority system with the [Serial Class](../../../main/docs/serial.md "Serial Class").
+```python
+    # Create an object to hold the result    
+    r = Response()    
+    # region Send to Priority
+    q.toPri(                    # Send this object to Priority        
+        Config(                 # Using this configuration
+            env=arg.byName(['e','env']) ,            # the Priority environment
+            path=os.getcwd()        # the location of the config file
+        ) , 
+        q.toFlatOdata ,         # Method to generate oData Commands
+                                    # toFlatOdata - send to oData load form
+                                    # toOdata - send to nested Priority forms
+                                    # OR a custom method.        
+        response=r              # the apy request/response object. Use:
+                                    # for command:      response=Response   (a new response is used)
+                                    # for apy usage:    request=request     (the request.response is used)
+    )
+	
+```
+
+See also: [Running the EPDM as a service](../../../main/transport/service "Service Transport").
