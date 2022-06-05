@@ -41,6 +41,7 @@ arg.args()[1] = "SOME VALUE"
 ```
 progname.exe -arg1 "C:\SOMEFILE.TXT" "SOME VALUE"
 ```
+We can combine names and positional parameters in our command line arguments, like so:
 ```python    
 arg = clArg()
 
@@ -53,7 +54,7 @@ print(arg.byName(['arg1','a1'])) = "C:\SOMEFILE.TXT"
 ```
 
 ### Using in a service.
-When using this clArg in a service, you need to pass the args paramater of the service constructor as a paramater to clArg.
+Note when using this clArg in the service context, you need to pass the args paramater of the service constructor as a paramater to clArg.
 ```python
 class MyService(win32serviceutil.ServiceFramework):
     
