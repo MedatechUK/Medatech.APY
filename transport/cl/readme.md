@@ -101,4 +101,4 @@ This is used to set the enviroment of the Priority system with the [Serial Class
 	
 ```
 
-See also: [Running the EPDM as a service.](../../../main/transport/service "Service Transport").
+See also: [Running the EPDM as a service](../../../main/transport/service "Service Transport").
