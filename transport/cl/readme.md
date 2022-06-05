@@ -155,4 +155,4 @@ response : {
 }
 
 ```
-See also: [Running the EPDM as a service](../../../main/transport/service "Service Transport").
+See also: [Running the EPDM from a service](../../../main/transport/service "Service Transport").
