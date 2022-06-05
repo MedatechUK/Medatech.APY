@@ -14,7 +14,7 @@ The service transport is an example of using the packages to monitor filesystem 
 
 See also: [folderWatch](../../../tree/main/docs/cl.md#folderWatch "folderWatch")
 
-## [Web transport](../../../tree/main/transport/web "web transport")
+## [http transport](../../../tree/main/transport/web "web transport")
 The web transport is an example of using the packages to handle http requests.
 
 See also: [APY](../../../tree/main/docs/apy.md "Python API")
