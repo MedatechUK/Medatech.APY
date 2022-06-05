@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This example expands upon the [EPDM Tutorial](../../../main/docs/epdm.md "EPDM Class") to use [command line arguments](../../../main/docs/cl.md "command line arguments").
+This example expands upon the [EPDM Tutorial](../../../main/docs/epdm.md "EPDM Class"), converting our script into an .exe and implimenting [command line arguments](../../../main/docs/cl.md "command line arguments").
 
 We use [pyinstaller](https://pyinstaller.org/ "pyinstaller") to create a .exe file from a python script.
 ```
@@ -12,7 +12,7 @@ pyinstaller --onefile your_program.py
 
 ```
 
-When we run our program we want to be able to pass in the following [command line arguments](../../../main/docs/cl.md "command line arguments"):
+When we run our EPDM program we want to be able to pass in the following [arguments](../../../main/docs/cl.md "command line arguments"):
 - /cwd {The current working directory}
 - /env {The Priority environment in which to run the loading}
 
@@ -23,7 +23,10 @@ from MedatechUK.cl import clArg
 ```
 
 ## Validating the command line parameters
-Before we do anything, we must verify that we have required parameters and that referenced files exist.
+Before we do anything, we must verify that 
+- we have a positional argument
+- that argument is an extant file
+- that we have an environment (-env) specified.
 ```python
 try:     
 
