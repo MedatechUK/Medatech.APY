@@ -101,4 +101,52 @@ This is used to set the enviroment of the Priority system with the [Serial Class
 	
 ```
 
+###Running our .exe
+```
+M:\python\apy>solidworks.exe -e wlnd example.xml
+
+[200]: OK
+response : {
+    "@odata.context": "https://priority.ntsa.uk/odata/Priority/tabula.ini/wlnd/$
+metadata#ZODA_TRANS/$entity",
+    "TYPENAME": "SW",
+    "BUBBLEID": "fe62189e-6aab-4dcc-a511-77842fe1ff77",
+    "CREATEDATE": "2022-06-05T11:52:00+01:00",
+    "COMPLETE": "Y",
+    "COMPLETEDATE": "2022-06-05T11:52:00+01:00",
+    "LOADED": null,
+    "LOADDATE": null,
+    "LINE": 581,
+    "LOADTYPE": 10
+}
+[200]: OK
+response : {
+    "@odata.context": "https://priority.ntsa.uk/odata/Priority/tabula.ini/wlnd/$
+metadata#ZODA_TRANS/$entity",
+    "TYPENAME": "SW",
+    "BUBBLEID": "738bf9b3-ca01-4c98-ab36-39a1dbe5c609",
+    "CREATEDATE": "2022-06-05T11:52:00+01:00",
+    "COMPLETE": "Y",
+    "COMPLETEDATE": "2022-06-05T11:52:00+01:00",
+    "LOADED": null,
+    "LOADDATE": null,
+    "LINE": 582,
+    "LOADTYPE": 10
+}
+[200]: OK
+response : {
+    "@odata.context": "https://priority.ntsa.uk/odata/Priority/tabula.ini/wlnd/$
+metadata#ZODA_TRANS/$entity",
+    "TYPENAME": "SW",
+    "BUBBLEID": "3cf13eef-44f6-4758-9828-354d9983ae54",
+    "CREATEDATE": "2022-06-05T11:52:00+01:00",
+    "COMPLETE": "Y",
+    "COMPLETEDATE": "2022-06-05T11:52:00+01:00",
+    "LOADED": null,
+    "LOADDATE": null,
+    "LINE": 583,
+    "LOADTYPE": 10
+}
+
+```
 See also: [Running the EPDM as a service](../../../main/transport/service "Service Transport").
