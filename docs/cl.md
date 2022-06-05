@@ -120,7 +120,7 @@ e.g.:
 ```
 
 ## Moving the processed file to the /log
-Then folderWatch uses the **logFile** method of the [logging package](log.md "logging package") to move the processed file to the \log folder.
+Then folderWatch uses the **logFile** method of the [logging package](log.md#loglogfile-file_name- "logging package") to move the processed file to the \log folder.
 ```python
             self.log.logFile(self.filePath(f))
 
