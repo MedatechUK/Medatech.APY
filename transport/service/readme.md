@@ -35,7 +35,7 @@ py yourscript.py debug -m sandbox
 ## Folder monitoring
 We're going to monitor for new files using the [folderWatch package](../../../main/docs/cl.md#folderWatch "folderWatch package").
 
-Also we want our service to use the [clArg Class](../../../main/docs/cl.md "clArg Class") class to pass a -mode value, to allow us to specify which configuration we want to use (live or sandbox).
+Also we want our service to use the [clArg Class](../../../main/docs/cl.md "clArg Class") class to pass a -mode value, to allow us to specify which configuration we want to use (for example, live or sandbox).
 
 ## Our Settings file
 
