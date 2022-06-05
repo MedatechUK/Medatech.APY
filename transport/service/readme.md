@@ -45,27 +45,21 @@ So we'll need some settings that will hold:
 - the list of places our service should look for files
 - an instruction about what to do with files that it finds
 
-We're going to store these settings using a [Serial Class](../../../main/docs/serial.md "Serial Class") with this structure:
+We're going to store these settings using a [Serial Class](../../../main/docs/serial.md "Serial Class") with the following structure:
 
-> defaultconfig name
-
-> > config 1
-
-> > > settings 1
-
-> > > settings 2
-
-> > > settings ...n
-
-> > config 2
-
-> > > settings 1
-
-> > > settings 2
-
-> > > settings 3
-
-> > > settings ...n
+- defaultconfig name
+	- config 1
+	 	- settings 1
+		- settings 2
+		- settings ...n
+	- config 2
+	 	- settings 1
+		- settings 2
+		- settings ...n
+	- config n
+	 	- settings 1
+		- settings 2
+		- settings ...n
 
 ### Constructing the settings file (settings.py)
 We can use the following Python code to create an instance of our setting class, and [save our settings file](../../../main/docs/serialmethod.md "Serial Package").
