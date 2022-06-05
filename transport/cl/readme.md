@@ -14,7 +14,7 @@ pyinstaller --onefile your_program.py
 
 When we run our program we want to be able to pass in [command line arguments](../../../main/docs/cl.md "command line arguments"):
 - /cwd {The current working directory}
-- /env {The Priority environment in which to eun the loading}
+- /env {The Priority environment in which to run the loading}
 
 ## Imports
 ```python
