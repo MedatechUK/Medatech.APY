@@ -12,6 +12,7 @@ To do this we need to use a Windows service. Services are terminate and stay res
 
 ## Python as a service
 To create a service we first need to install pywin32.
+
 	pip install pywin32
 
 Install your script as a service.
