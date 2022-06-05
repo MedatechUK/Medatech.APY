@@ -54,30 +54,6 @@ except Exception as e:
 	
 ```
 
-## Setting the -cwd (current working directory)
-
-We want to use the command line parameter -cwd to set the current working directory:
-
-We can use the arg.byName(['cwd','path'] methods to find a parameter called EITHER cwd or path.
-```python
-
-if __name__ == '__main__':    
-
-    arg = clArg()
-
-    #region "Create a log file"
-    log = mLog()    
-    if arg.byName(["cwd" , "path"]) != None:
-        if not exists(arg.byName(["cwd" , "path"])):
-            raise NameError("Specified working directory {} is missing.".format(arg.byName(["cwd" , "path"])))
-        else:
-            os.chdir(arg.byName(["cwd" , "path"]))
-    
-    log.start( os.getcwd() , "DEBUG" )            
-    log.logger.debug("Starting {}".format(__file__))     
-
-```
-
 ## Setting the -env (environment) parameter
 
 We want to use the command line parameter -env to set the Priority company for the loading:
@@ -105,7 +81,36 @@ This is used to set the enviroment of the Priority system with the [Serial Class
 	
 ```
 
+## Setting the -cwd (current working directory)
+
+We want to use the command line parameter -cwd to set the current working directory:
+
+We can use the arg.byName(['cwd','path'] methods to find a parameter called EITHER cwd or path.
+```python
+
+if __name__ == '__main__':    
+
+    arg = clArg()
+
+    #region "Create a log file"
+    log = mLog()    
+    if arg.byName(["cwd" , "path"]) != None:
+        if not exists(arg.byName(["cwd" , "path"])):
+            raise NameError("Specified working directory {} is missing.".format(arg.byName(["cwd" , "path"])))
+        else:
+            os.chdir(arg.byName(["cwd" , "path"]))
+    
+    log.start( os.getcwd() , "DEBUG" )            
+    log.logger.debug("Starting {}".format(__file__))     
+
+```
+
 ## Running our .exe
+Build the .exe with:
+	
+	pyinstaller --onefile your_program.py
+
+And execute it:
 ```
 M:\python\apy>solidworks.exe -e wlnd example.xml
 
