@@ -75,9 +75,9 @@ This package checks a folder for files:
 ```python
     fs = folderWatch(
 	   folder="M:\\python\\apy\\SolidWorks\\" ,  	## The folder to monitor
-	   ext="xml" ,						## For files of type
+	   ext="xml" ,					## For files of type
 	   handler="M:\\python\\apy\\solidworks.exe" , 	## Run this handler exe
-	   env="wlnd"  						## And pass this -env parameter
+	   env="wlnd"  					## And pass this -env parameter
         
     )
 ```
