@@ -15,7 +15,7 @@ pyinstaller --onefile your_program.py
 When we run our EPDM program we want to be able to pass in the following [arguments](../../../main/docs/cl.md "command line arguments"):
 - /cwd {The current working directory}
 - /env {The Priority environment in which to run the loading}
-- {File_Name} : The file to load (positional argument [0])
+- {File_Name} : The file to load ([positional](../../../main/docs/cl.md "command line arguments") argument [0])
 
 ## Imports
 ```python
