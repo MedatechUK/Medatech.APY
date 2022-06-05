@@ -14,7 +14,7 @@ This package extends the [sys.argv](https://docs.python.org/3/library/sys.html "
 ### Named Arguments
 A named argument can be passed with a - or / prefixed key. 
 ```
-progname.exe -arg value -arg2 "value two"
+progname.exe -arg value /arg2 "value two"
 ```
 
 These are accessed by the .byName() method, which accepts an array of possible names:
@@ -38,17 +38,17 @@ arg.args()[1] = "SOME VALUE"
 ```
 
 ### Combining named and positional arguments
+```
+progname.exe -arg1 "C:\SOMEFILE.TXT" "SOME VALUE"
+```
 ```python    
 arg = clArg()
 
-# Read command line paramaters as a kwargs.
-print(arg.kwargs())
-
-# Get unnamed arguments by [number]
-print(arg.args()[0])
+# Get positional arguments by [ordinal]
+print(arg.args()[0]) = "SOME VALUE"
 
 # Get a named argument, with alternate param names.
-print(arg.byName(['arg1','a1']))
+print(arg.byName(['arg1','a1'])) = "C:\SOMEFILE.TXT"
 	
 ```
 
@@ -58,7 +58,7 @@ When using this clArg in a service, you need to pass the args paramater of the s
 class MyService(win32serviceutil.ServiceFramework):
     
     def __init__(self,args):
-		
+			
 		a = clArg(args=args)
 	
 ```
@@ -78,14 +78,20 @@ This package checks a folder for files:
         
     )
 ```
-Then we can run the check method to process the folder. For each file found:
+Then we can run the check method to check for new files the folder. 
+
+For each file found:
 - we run the handler.exe with:
 	- the file found
-	- set environment
-	- log the file
-```python	
-    fs.check()
-	
+	- set -env environment
+	- then copy the file to the /log
+
+```python
+fs.check()
+```
+
+The check method spawns a handler process for each file found.
+```python	   	
     def check(self, cwd):
         for f in self.files():   
             self.log.logger.debug(               
@@ -97,8 +103,9 @@ Then we can run the check method to process the folder. For each file found:
                 , shell=False
             )	
 ```
-The subprocess call runs the following statement:
-			
+The subprocess call runs the a prgram in the format:
+
+{hander_exe} -e {environment} -cwd {current_working_directory} {file_to_process}, e.g.:			
 ```
 \\walrus\nas\PriorityMobile\python\apy\solidworks.exe -e wlnd -cwd C:\pyedi\ \\walrus\nas\PriorityMobile\python\apy\SolidWorks\example.xml
 ```
