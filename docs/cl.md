@@ -69,7 +69,7 @@ class MyService(win32serviceutil.ServiceFramework):
 This package checks a folder for files:
 - in the specified folder
 - of a specified type
-- that is not open by the file system	
+- that are not open in the file system (i.e. still being written to)
 
 ### Construct a folderWatch
 ```python
