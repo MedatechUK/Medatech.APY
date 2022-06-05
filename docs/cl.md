@@ -84,8 +84,10 @@ This package checks a folder for files:
 
 ### The check() method
 Then we can run the check method to check for new files in the specified folder. 
+
+Optionally, we can also specify the current working directory, which passes a -cwd parameter to the handler, so that the handler uses the services setting files and /log.
 ```python
-fs.check()
+fs.check({current_working_directory})
 
 ```
 
