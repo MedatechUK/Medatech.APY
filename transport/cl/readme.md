@@ -101,7 +101,7 @@ This is used to set the enviroment of the Priority system with the [Serial Class
 	
 ```
 
-###Running our .exe
+## Running our .exe
 ```
 M:\python\apy>solidworks.exe -e wlnd example.xml
 
