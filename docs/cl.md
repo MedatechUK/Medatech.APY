@@ -94,6 +94,7 @@ fs.check({current_working_directory})
 For each file found by the folderWatch, we want to run the handler exe with the following parameters:
 - the file found
 - the -env environment
+
 And then move the file to the /log after processing
 
 The check method spawns a handler process for each file found.
