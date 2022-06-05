@@ -126,4 +126,4 @@ Then folderWatch uses the **logFile** method of the [logging package](log.md "lo
 
 ```
 
-See also: [folderWatch example: In a service](../transport/service "Service Transport").
+See also: [folderWatch example: In a service](../transport/service#Folder monitoring "Service Transport").

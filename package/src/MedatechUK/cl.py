@@ -38,7 +38,7 @@ class clArg():
         return self._kw
     
     def args(self):
-        return self._a
+        return self._a[::-1]
     
     def byName(self, key):
         for k in self._kw:
