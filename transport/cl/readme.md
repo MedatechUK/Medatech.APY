@@ -54,7 +54,7 @@ except Exception as e:
 	
 ```
 
-## Setting the current working directory
+## Setting the -cwd (current working directory)
 
 We want to use the command line parameter -cwd to set the current working directory:
 
