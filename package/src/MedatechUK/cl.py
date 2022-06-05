@@ -145,9 +145,10 @@ class folderWatch():
                     and not self.isFileLocked(self._folder + '\\' + f)]
     
     def check(self, cwd):
-        for f in self.files():   
-            self.log.logger.debug(               
-                self.CMD(cwd , f)
+        for f in self.files():  
+            self.log.logger.info("Found file {}.".format(self.filePath(f))) 
+            self.log.logger.info(               
+                "shell: {}".format(self.CMD(cwd , f))
             )         
             subprocess.call(
                 self.CMD(cwd , f)

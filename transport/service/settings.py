@@ -157,6 +157,8 @@ class fWatch(SerialBase) :
 
 #endregion
 
+#endregion
+
 if __name__ == '__main__': 
 
     # Create a Setting file.

@@ -100,6 +100,7 @@ class mLog():
                 
                     newf = "{}-{}.{}".format(fi , i , ex)
 
+                self.logger.info("Moving file from {} to {}".format(f , "{}\\".format(fn)))
                 shutil.move(f, "{}\\{}".format(os.path.dirname(f).rstrip("\\"), newf))
                 shutil.move("{}\\{}".format(os.path.dirname(f).rstrip("\\") , newf), "{}\\".format(fn) )
 
