@@ -108,7 +108,7 @@ if __name__ == '__main__':
 ## Running our .exe
 Build the .exe with:
 	
-	pyinstaller --onefile your_program.py
+	pyinstaller --onefile solidworks.py
 
 And execute it:
 ```
