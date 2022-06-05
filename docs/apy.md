@@ -4,7 +4,7 @@ This package defines:
 - a Request object that is passed to the *ProcessRequest()* method of a handler.
 - a Response object that can be edited to provide an appropriate response (http status , message and data) to the Request
 
-To set up your IIS to create handlers, see the *[IIS config](iis.md "IIS config")* FIRST!
+To set up your IIS to create handlers, see the [http transport example](../transport/web "http Transport") FIRST!
 
 ## Imports
 ```python
