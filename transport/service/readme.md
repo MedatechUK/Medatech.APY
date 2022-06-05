@@ -12,25 +12,19 @@ To do this we need to use a Windows service. Services are terminate and stay res
 
 ## Python as a service
 To create a service we first need to install pywin32.
-```
-pip install pywin32
+	pip install pywin32
 
-```
-### Install your script as a service.
-```
-py yourscript.py install
+Install your script as a service.
 
-```
-### Update changes to your script.
-```
-py yourscript.py update
+	py yourscript.py install
 
-```
-### Debug your service (with command line parameters).
-```
-py yourscript.py debug -m sandbox
+Update changes to your script.
 
-```
+	py yourscript.py update
+
+Debug your service (with command line parameters).
+
+	py yourscript.py debug -m sandbox
 
 ## Folder monitoring
 We're going to monitor for new files using the [folderWatch package](../../../main/docs/cl.md#folderWatch "folderWatch package").
