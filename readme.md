@@ -75,7 +75,7 @@ with open('test.json', 'r') as the_file:
 
 A class for handling HTTP Request/Response.
 
-See Also: [How to set up IIS](docs/iis.md "How to set up IIS")
+See Also: the [http transport example](transport/web "http Transport")
 
 ```python
 from MedatechUK.apy import Request , Response
@@ -112,6 +112,10 @@ def ProcessRequest(request) :
 ### [EPDM Class](docs/epdm.md "EPDM Class")
 
 A package for working with EPDM (Solid Works) serial data.
+
+See Also: [Making the EPDM example executable](transport/cl "Command Line Transport").
+
+See Also: [Running the EPDM executable as a service](transport/service "Service Transport").
 
 ```python
 from MedatechUK.epdm import xmlTransactions
