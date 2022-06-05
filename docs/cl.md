@@ -124,3 +124,5 @@ Then folderWatch uses the **logFile** method of the [logging package](log.md "lo
             self.log.logFile(self.filePath(f))
 
 ```
+
+See also: [folderWatch example: In a service](../transport/service "Service Transport").
