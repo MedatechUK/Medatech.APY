@@ -114,6 +114,10 @@ def ProcessRequest(request) :
 
 A package for working with EPDM (Solid Works) serial data.
 
+See Also: [Making the EPDM example executable](../transport/cl "Command Line Transport").
+
+See Also: [Running the EPDM executable as a service](../transport/service "Service Transport").
+
 ```python
 from MedatechUK.epdm import xmlTransactions
 
