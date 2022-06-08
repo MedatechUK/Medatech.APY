@@ -3,6 +3,7 @@ from base64 import b64encode
 from http.client import HTTPSConnection
 import xmltodict , dicttoxml
 from xml.dom.minidom import parseString
+from datetime import datetime
 
 from MedatechUK.oDataConfig import Config
 from MedatechUK.mLog import mLog
@@ -116,7 +117,17 @@ class SerialT :
             'INT': chr(34) + self.pCol + chr(34) + " : " + str(this) ,
             'REAL': chr(34) + self.pCol + chr(34) + " : " + str(this) ,
         }.get(self._pType.upper(), chr(34) + self.pCol + chr(34) + " : " + chr(34) + str(this) + chr(34))
-    
+
+    def SQLColumn(self, this):
+        return self.pCol.upper()
+
+    def SQLValue(self, this):
+        return {
+            'CHAR': chr(39) + str(this) + chr(39) ,
+            'INT':  str(this) ,
+            'REAL': str(this) ,
+        }.get(self._pType.upper(), chr(39) + str(this) + chr(39))
+
     def XML(self, this):
         return "<" + self._pCol + ">" + str(this) + "</" + self._pCol + ">"
 
@@ -142,6 +153,7 @@ class SerialBase :
         self.form = form
         self.props = {}
         self.log = mLog() 
+        self.ret = {}  
 
         for arg in kwargs.keys():  
             if arg.upper() == '_XML':     
@@ -333,8 +345,157 @@ class SerialBase :
             
             ret += " } ] }"
 
-        return ret
-    
+        return ret    
+
+    def toSQL(self , this = 0):         
+         
+        names = {}
+        l = 0     
+        if (this==0):     
+            self.ret = {}       
+            l = 1
+            this = self            
+        
+            names[len(names)] = ({"name" : "BUBBLEID", "value" : this.props["bubbleid"].SQLValue(this.form.bubbleid)})
+            names[len(names)] = (
+                {
+                    "name" : "LOADTYPE", 
+                    "value" : "( select TYPE from ZODAT_TYPE where TYPENAME = {} )".format(
+                        this.props["typename"].SQLValue(this.form.typename)
+                    )
+                }
+            )
+            names[len(names)] = (
+                {
+                    "name" : "LINE", 
+                    "value" : "( SELECT MAX(LINE)+1 FROM ZODAT_TRANS )"
+                }
+            )
+            
+            self.ret[len(self.ret)] = names
+            self.ret[len(self.ret)-1]["TABLE"] = this.form.fname
+            names = {}
+        
+        names[len(names)] = (
+            {
+                "name" : "PARENT", 
+                "value" : "( SELECT LINE FROM ZODAT_TRANS WHERE BUBBLEID = {})".format(
+                    self.ret[0][0].get("value")
+                )                 
+            }
+        )
+        names[len(names)] = (
+            {
+                "name" : "LINE", 
+                "value" : "{}".format(str(len(self.ret)))
+            }
+        )        
+
+        if isinstance(this, list):            
+            for i in this:      
+                if len(names) > 2:  
+                    self.ret[len(self.ret)] = names 
+                    self.ret[len(self.ret)-1]["TABLE"] = i.form.fname   
+                    names = {}                   
+                self.toSQL(i)                              
+
+        else:                        
+            names[len(names)] = ({"name" : "RECORDTYPE", "value" : this.props["rt"].SQLValue(this.form.rt)})                 
+            
+            # Iterate through readonly properties
+            for key in this.props:
+                if (key != "rt" and key !="bubbleid" and key !="typename"):
+                    if not this.__dict__.__contains__("_" + key):                                              
+                        names[len(names)] = (
+                            {
+                                "name" : this.props[key.lstrip('_')].SQLColumn(getattr(this, key)), 
+                                "value" : this.props[key.lstrip('_')].SQLValue(getattr(this, key)) 
+                            }
+                        )        
+
+            for p in range(3):
+                for key in this.__dict__ :                      
+                    if (key != "_props" and key !="form" and key !="log"):
+                        # print("{} {}".format(p,key))
+
+                        if isinstance(this.__dict__[key], list) and p==2: 
+                            if len(names) > 2:  
+                                self.ret[len(self.ret)] = names
+                                self.ret[len(self.ret)-1]["TABLE"] = this.form.fname
+                                names = {}
+                            self.toSQL(this.__dict__[key])                   
+
+                        elif hasattr(getattr(this , key), "props") and p==1:
+                            if len(names) > 2:
+                                self.ret[len(self.ret)] = names
+                                self.ret[len(self.ret)-1]["TABLE"] = this.form.fornname
+                                names = {}
+                            self.toSQL(this.__dict__[key])  
+                            
+                        elif p==0:
+                            if(hasattr(this,"props")) and this.props.__contains__(key.lstrip('_')):
+                                names[len(names)] = (
+                                    {
+                                        "name" : this.props[key.lstrip('_')].SQLColumn(this.__dict__[key]), 
+                                        "value" : this.props[key.lstrip('_')].SQLValue(this.__dict__[key]) 
+                                    }
+                                )                                                      
+
+            if len(names) > 2:
+                self.ret[len(self.ret)] = names
+                self.ret[len(self.ret)-1]["TABLE"] = this.form.fname
+                names = {}
+
+        if (l!=0):   
+            if len(self.ret) >2 :
+                self.ret[1]["TABLE"] = self.ret[2]["TABLE"]
+                
+            ins = ""
+            ins += "if exists(select TYPE from ZODAT_TYPE where TYPENAME = {})\nbegin\n".format(this.props["typename"].SQLValue(this.form.typename))
+            ins += "\tset identity_insert ZODAT_TRANS  on\n" 
+            for e in range(len(self.ret)) :                
+                ins += "\tINSERT INTO {} ( ".format(self.ret[e]["TABLE"])                 
+                
+                for f in range(len(self.ret[e])-1) : 
+                    try:
+                        a = self.ret[e][f]["name"]
+                        if f==0:
+                            ins += "{}".format( self.ret[e][f].get("name") ) 
+                        else:
+                            ins += ", {}".format( self.ret[e][f].get("name") ) 
+                    except:
+                        pass
+
+                ins += " ) VALUES ( "                
+                for f in range(len(self.ret[e])-1) : 
+                    try:
+                        a = self.ret[e][f]["name"]
+                        if f==0:
+                            ins += "{}".format( self.ret[e][f].get("value") ) 
+                        else:
+                            ins += ", {}".format( self.ret[e][f].get("value") ) 
+                    except:
+                        pass               
+
+                ins += " )\n" 
+            
+            d = datetime.now()
+            ins += "\tUPDATE ZODAT_TRANS SET COMPLETE = 'Y' , COMPLETEDATE = {} WHERE BUBBLEID = {}\n".format(                              
+                int(
+                    (datetime(
+                        d.year, 
+                        d.month, 
+                        d.day, 
+                        d.hour, 
+                        d.minute) 
+                    - datetime(1988, 1, 1)).total_seconds() / 60
+                ) ,
+                self.ret[0][0].get("value")
+            )
+            ins += "\tset identity_insert ZODAT_TRANS  off\n"
+            ins += "end"
+            return ins
+            
     def toPri(self, config, method, **kwargs):            
         
         ## This function will PATCH a completion request ONLY
@@ -446,3 +607,4 @@ class SerialBase :
     #endregion
 
 #endregion
+ #

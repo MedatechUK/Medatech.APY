@@ -55,6 +55,7 @@ with open('{FILENAME}', 'r') as the_file:
 ## POST to Priority oData
 Using the *[Configuration](serial.md "Config Object")* and *[Response Object](apy.md "Response Object")*
 
+See [Example](../transport/cl#running-our-exe "Example").
 ```python  
     # Create an object to hold the result
     Response = Response()
@@ -82,6 +83,32 @@ Using the *[Configuration](serial.md "Config Object")* and *[Response Object](ap
     print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
 ```
 
+## POST to Priority Using SQL
+We can use the same structure to write our object as SQL commands to the server descibed in our *[Config](oDataConfig.md "Config Object")*:
+
+See [Example](../transport/cl#writing-to-sql "Example").
+```python
+    Response = Response()
+    
+    # Send to Priority
+    q.toPriSQL(                    # Send this object to Priority SQL
+        
+        Config(                 # Using this configuration
+            env="wlnd" ,            # the Priority environment
+            path=os.getcwd()        # the location of the config file
+        ) , 
+
+        q.toSQL ,         # Method to generate sql Commands
+                                    # toSQL - send to oData load form                                    
+                                    # OR a custom method.
+        
+        response=Response       # the apy request/response object. Use:
+                                    # for command:      response=Response   (a new response is used)
+                                    # for apy usage:    request=request     (the request.response is used)
+    )
+
+```
+	
 ## Usage as a web handler
 Using the *[Request Object](apy.md "Request Object")*
 ```python

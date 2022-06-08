@@ -320,28 +320,31 @@ def readConfig(configuration):
         for s in configuration.references :
             q.child.append(ECOChild(**s.configuration.kwargs()))
     
-    # Create an object to hold the result    
-    r = Response()    
-    # region Send to Priority
-    q.toPri(                    # Send this object to Priority        
-        Config(                 # Using this configuration
-            env=arg.byName(['e','env']) ,            # the Priority environment
-            path=os.getcwd()        # the location of the config file
-        ) , 
-        q.toFlatOdata ,         # Method to generate oData Commands
-                                    # toFlatOdata - send to oData load form
-                                    # toOdata - send to nested Priority forms
-                                    # OR a custom method.        
-        response=r              # the apy request/response object. Use:
-                                    # for command:      response=Response   (a new response is used)
-                                    # for apy usage:    request=request     (the request.response is used)
-    )
+    print(q.toSQL())
 
-    #endregion
-    
-    # Display the result
-    print( "[{}]: {}".format( r.Status , r.Message ))
-    print( "response : " + json.dumps( r.data , sort_keys=False, indent=4 ))
+    if False:
+        # Create an object to hold the result    
+        r = Response()    
+        # region Send to Priority
+        q.toPri(                    # Send this object to Priority        
+            Config(                 # Using this configuration
+                env=arg.byName(['e','env']) ,            # the Priority environment
+                path=os.getcwd()        # the location of the config file
+            ) , 
+            q.toFlatOdata ,         # Method to generate oData Commands
+                                        # toFlatOdata - send to oData load form
+                                        # toOdata - send to nested Priority forms
+                                        # OR a custom method.        
+            response=r              # the apy request/response object. Use:
+                                        # for command:      response=Response   (a new response is used)
+                                        # for apy usage:    request=request     (the request.response is used)
+        )
+
+        #endregion
+        
+        # Display the result
+        print( "[{}]: {}".format( r.Status , r.Message ))
+        print( "response : " + json.dumps( r.data , sort_keys=False, indent=4 ))
 
 def recurse(document):
 
