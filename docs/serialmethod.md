@@ -83,6 +83,25 @@ See [Example](../transport/cl#running-our-exe "Example").
     print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
 ```
 
+This generate the following log:
+```
+11:37:21 DEBUG serialtest.py > oDataConfig.py Opening [\\walrus\nas\PriorityMobile\python\apy\web.config].
+11:37:24 INFO serialtest.py > Serial.py > serialtest.py > Serial.py Checking environment [wlnd].
+11:37:24 INFO serialtest.py > Serial.py > serialtest.py > Serial.py Environment [wlnd] OK!
+11:37:24 DEBUG serialtest.py > Serial.py > serialtest.py > Serial.py use wlnd; if exists(select TYPE from ZODAT_TYPE where TYPENAME = 'ORD')
+begin
+	set identity_insert ZODAT_TRANS  on
+	INSERT INTO ZODAT_TRANS ( BUBBLEID, LOADTYPE, LINE ) VALUES ( 'ab7b710c-21bd-426e-b0f7-e6db8e893696', ( select TYPE from ZODAT_TYPE where TYPENAME = 'ORD' ), ( SELECT MAX(LINE)+1 FROM ZODAT_TRANS ) )
+	INSERT INTO ZODAT_LOAD ( PARENT, LINE, RECORDTYPE, TEXT1, TEXT2 ) VALUES ( ( SELECT LINE FROM ZODAT_TRANS WHERE BUBBLEID = 'ab7b710c-21bd-426e-b0f7-e6db8e893696'), 1, '1', 'CUST123', 'ORD1112233' )
+	INSERT INTO ZODAT_LOAD ( PARENT, LINE, RECORDTYPE, INT2, TEXT1, REAL1 ) VALUES ( ( SELECT LINE FROM ZODAT_TRANS WHERE BUBBLEID = 'ab7b710c-21bd-426e-b0f7-e6db8e893696'), 2, '2', 17883360, 'ABC', 1.1 )
+	INSERT INTO ZODAT_LOAD ( PARENT, LINE, RECORDTYPE, INT2, TEXT1, REAL1 ) VALUES ( ( SELECT LINE FROM ZODAT_TRANS WHERE BUBBLEID = 'ab7b710c-21bd-426e-b0f7-e6db8e893696'), 3, '2', 17928000, 'DEF', 2.2 )
+	INSERT INTO ZODAT_LOAD ( PARENT, LINE, RECORDTYPE, INT2, TEXT1, REAL1 ) VALUES ( ( SELECT LINE FROM ZODAT_TRANS WHERE BUBBLEID = 'ab7b710c-21bd-426e-b0f7-e6db8e893696'), 4, '2', 17968320, 'GHI', 3.3 )
+	UPDATE ZODAT_TRANS SET COMPLETE = 'Y' , COMPLETEDATE = 18111577 WHERE BUBBLEID = 'ab7b710c-21bd-426e-b0f7-e6db8e893696'
+	set identity_insert ZODAT_TRANS  off
+end
+
+```
+
 ## POST to Priority Using SQL
 We can use the same structure to write our object as SQL commands to the server descibed in our *[Config](oDataConfig.md "Config Object")*:
 
