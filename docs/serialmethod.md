@@ -85,10 +85,10 @@ See [Example](../transport/cl#running-our-exe "Example").
 
 This generate the following log:
 ```
-11:37:21 DEBUG serialtest.py > oDataConfig.py Opening [\\walrus\nas\PriorityMobile\python\apy\web.config].
-11:37:24 INFO serialtest.py > Serial.py > serialtest.py > Serial.py Checking environment [wlnd].
-11:37:24 INFO serialtest.py > Serial.py > serialtest.py > Serial.py Environment [wlnd] OK!
-11:37:24 DEBUG serialtest.py > Serial.py > serialtest.py > Serial.py use wlnd; if exists(select TYPE from ZODAT_TYPE where TYPENAME = 'ORD')
+21:37:21 DEBUG serialtest.py > oDataConfig.py Opening [\\walrus\nas\PriorityMobile\python\apy\web.config].
+21:37:24 INFO serialtest.py > Serial.py > serialtest.py > Serial.py Checking environment [wlnd].
+21:37:24 INFO serialtest.py > Serial.py > serialtest.py > Serial.py Environment [wlnd] OK!
+21:37:24 DEBUG serialtest.py > Serial.py > serialtest.py > Serial.py use wlnd; if exists(select TYPE from ZODAT_TYPE where TYPENAME = 'ORD')
 begin
 	set identity_insert ZODAT_TRANS  on
 	INSERT INTO ZODAT_TRANS ( BUBBLEID, LOADTYPE, LINE ) VALUES ( 'ab7b710c-21bd-426e-b0f7-e6db8e893696', ( select TYPE from ZODAT_TYPE where TYPENAME = 'ORD' ), ( SELECT MAX(LINE)+1 FROM ZODAT_TRANS ) )
