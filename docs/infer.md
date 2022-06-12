@@ -20,7 +20,7 @@ The tool infers the required classes to serialise json data, based on a JSON fil
 }
 ```
 
-## [MakeProps.py](../package/tests/MakeProps.py "MakeProps.py")
+## [makeprops.py](../package/tests/makeprops.py "makeprops.py")
 The following script uses the infer object from the serial class to create a list of serial objects, add some test code and any required imports. 
 
 ```Python
