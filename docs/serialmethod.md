@@ -2,6 +2,8 @@
 
 The following examples are based on the [order / orderitems class](serial.md "order / orderitems class").
 
+The following examples are from the [serialtest.py](../package/tests/serialtest.py "serialtest.py") test script.
+
 ## Create an Object instance
 ```python
 x = order( custname = 'CUST123' , ordname = 'ORD1112233' )
