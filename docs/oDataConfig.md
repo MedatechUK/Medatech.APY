@@ -15,7 +15,8 @@ This package standardises the storage of required settings for connecting to pri
 	from MedatechUK.oDataConfig import Config
 ```
 
-## Method: Config(env=ENVIRONMENT , path=PATH) RETURNS a Config Object
+## Methods
+### Config(env=ENVIRONMENT , path=PATH) RETURNS a Config Object
 ```python
     Config(
         env=request.environment , 
@@ -37,6 +38,29 @@ This package standardises the storage of required settings for connecting to pri
 | ouser         |The oData user, with API licence|
 | opass         |The oData passsword|
 | connstr       |The database connection string (to validate the environment).|
+
+### CheckEnviroment() 
+(added 0.0.20)
+Returns a boolean indicating if the configurations environment is valid.
+```
+if self.environment != "" and self.cont() :   
+    ## Is it a valid environment?
+    if not self.config.CheckEnviroment():
+        self.log.logger.critical("Invalid environment {}".format(self.config.environment))
+        self.Response.Status = 500
+        self.Response.Message = "Internal Server Error"
+        self.Response.data = {"error" : "Invalid environment [{}]".format(self.config.environment)} 
+		
+```
+
+### cnxn()
+(added 0.0.20)
+Returns a pyodbc connection using the detaiuls in the config file:
+```python
+cnxn = self.config.cnxn()
+crsr = cnxn.cursor()
+
+```
 
 ## Example \web.Config
 ```xml

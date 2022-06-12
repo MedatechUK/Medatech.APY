@@ -97,32 +97,11 @@ class Request:
 
         if self.environment != "" and self.cont() :   
             ## Is it a valid environment?
-            self.log.logger.debug("Validating environment [{}].".format( self.environment ))
-            try:
-                cnxn = pyodbc.connect("Driver={SQL Server Native Client 11.0};DATABASE=system;" + self.config.connstr )
-                crsr = cnxn.cursor() 
-                crsr.execute(
-                    "select DNAME from ENVIRONMENT where DNAME <> '' union all select 'system'"
-                )       
-                f = False              
-                for row in crsr.fetchall() :                
-                    if row.DNAME.lower() == self.environment.lower() :
-                        f = True
-                        # Set the environment to the cAsE of the db object
-                        self.environment = row.DNAME
-                
-                # Environment not found
-                if not f:
-                    self.log.logger.critical("Bad environment [{}].".format( self.environment ))
-                    self.Response.Status = 400
-                    self.Response.Message = "Invalid company."
-                    self.Response.data = {"error" : "Company [" + self.environment + "] not found."}   
-
-            except Exception as e:
-                self.log.logger.critical("dberror in {}: {}.".format( self.endpoint + '.' + self.ext , str(e) ))
+            if not self.config.CheckEnviroment():
+                self.log.logger.critical("Invalid environment {}".format(self.config.environment))
                 self.Response.Status = 500
                 self.Response.Message = "Internal Server Error"
-                self.Response.data = {"error" : self.endpoint + '.' + self.ext + " threw an exception.", "dberror" : str(e)}  
+                self.Response.data = {"error" : "Invalid environment [{}]".format(self.config.environment)} 
 
         ## Set the Content-Type of the request
         #   for GET            
@@ -147,7 +126,7 @@ class Request:
             elif self.environment !="" :
                 try:
                     self.log.logger.debug("Opening DB query: [{}] in [{}].".format( self.endpoint , self.environment ))
-                    cnxn = pyodbc.connect("Driver={SQL Server Native Client 11.0};DATABASE="+ self.environment +";" + self.config.connstr )
+                    cnxn = self.config.cnxn()
                     crsr = cnxn.cursor() 
 
                     crsr.execute(

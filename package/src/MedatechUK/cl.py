@@ -5,6 +5,7 @@ from os import listdir
 from os.path import exists, isfile, join
 import sys
 import subprocess
+from os.path import exists
 
 #region Command Line Arguments            
 class clArg():
@@ -39,6 +40,9 @@ class clArg():
     
     def args(self):
         return self._a[::-1]
+    
+    def argExists(self, id):
+        return exists(self._a[::-1][id])
     
     def byName(self, key):
         for k in self._kw:

@@ -17,6 +17,8 @@
 import os, json
 import xmltodict
 import inspect
+import pyodbc
+
 from MedatechUK.mLog import mLog
 
 class Config:
@@ -114,3 +116,35 @@ class Config:
                     self.opass = line.split("=")[1].split('"')[1]                                
                 if 'CONNSTR' in line.split("=")[0].upper():
                     self.connstr = line.split("=")[1].split('"')[1]                      
+
+    def CheckEnviroment(self):        
+        
+        self.log.logger.info("Checking environment [{}].".format( self.environment ))        
+        try:
+            cnxn = self.cnxn()
+        except:
+            return False
+            
+        crsr = cnxn.cursor() 
+        crsr.execute(
+            "select DNAME from ENVIRONMENT where DNAME <> '' union all select 'system'"
+        )    
+             
+        for row in crsr.fetchall() :                
+            if row.DNAME.lower() == self.environment.lower() :
+                f = True
+                # Set the environment to the cAsE of the db object
+                self.environment = row.DNAME
+                self.log.logger.info("Environment [{}] OK!".format( self.environment ))
+                return True
+        
+        # Environment not found
+        return False
+
+    def cnxn(self):
+        try:
+            return pyodbc.connect("Driver={SQL Server Native Client 11.0};DATABASE=system;" + self.connstr )        
+        except Exception as e:
+            self.log.logger.critical("Could not connect to ".format("Driver={SQL Server Native Client 11.0};DATABASE=system;" + self.connstr))
+            raise
+                  

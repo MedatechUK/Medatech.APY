@@ -32,9 +32,12 @@ class order(SerialBase) :
         return self._orderitems
     @orderitems.setter
     def orderitems(self, value):        
-        self._orderitems = value
-        for i in range(len(self._orderitems)):
-            self._orderitems[i] = orderitems(**self._orderitems[i])
+        self._orderitems = [] 
+        if isinstance(value, list):
+            for i in range(len(value)):            
+                self._orderitems.append(orderitems(**value[i]))
+        else:    
+            self._orderitems.append(orderitems(**value)) 
 
     #endregion
 
@@ -49,7 +52,7 @@ class order(SerialBase) :
         #endregion  
 
         #region "Set Meta info"
-        SerialBase.__init__(self , SerialF(fname="ZODA_TRANS", rt=1, typename="ORD"), **kwargs)  
+        SerialBase.__init__(self , SerialF(fname="ZODAT_TRANS", rt=1, typename="ORD"), **kwargs)  
         SerialT(self, "rt")
         SerialT(self, "bubbleid")
         SerialT(self, "typename")
@@ -115,7 +118,7 @@ class orderitems(SerialBase) :
         #endregion
 
         #region "Set Meta info"
-        SerialBase.__init__(self , SerialF(fname="ORDERITEMS", rt=2) , **kwargs)   
+        SerialBase.__init__(self , SerialF(fname="ZODAT_LOAD", rt=2) , **kwargs)   
         SerialT(self, "rt")
         SerialT(self, "partname" , pCol="TEXT1" , Len=10 , pType="CHAR")
         SerialT(self, "qty" , pCol="REAL1" , pType="REAL")
@@ -168,62 +171,139 @@ if __name__ == '__main__':
 
     #endregion
 
-    #region "Create an order"
-    x = order( custname = 'CUST123' , ordname = 'ORD1112233' )
-    x.orderitems.append(orderitems(partname="ABC" , qty=1.1 , duedate="01/01/2022"))
-    x.orderitems.append(orderitems(partname="DEF" , qty=2.2 , duedate="02/01/2022"))
-    x.orderitems.append(orderitems(partname="GHI" , qty=3.3 , duedate="03/01/2022"))
+    #region "input Message Usage"
     
-    # Output as json
-    #print(x.toJSON())
-
-    # Output as xml, with a root node for XML
-    #print(x.toXML(root="top"))
-
-    #endregion
-
-    #region "Load Order from xml file"    
-    with open('test2.xml', 'r') as the_file:        
-        q = order(_xml=the_file)
-        # Save to json
-        q.toFile('test2.json', q.toJSON)
-
-    #endregion
-    
-    #region "Load Order from json file"    
-    with open('test.json', 'r') as the_file:        
-        q = order(_json=the_file)
-        # Save to xml
-        q.toFile('test2.xml', q.toXML, root="root")
-
-    #endregion
-    
-    #region "Method usage"
-
-    # Create an object to hold the result
-    Response = Response()
-    
-    # Send to Priority
-    q.toPri(                    # Send this object to Priority
+    if False:
+        #region "Create an order"
+        x = order( custname = 'CUST123' , ordname = 'ORD1112233' )
+        x.orderitems.append(orderitems(partname="ABC" , qty=1.1 , duedate="01/01/2022"))
+        x.orderitems.append(orderitems(partname="DEF" , qty=2.2 , duedate="02/01/2022"))
+        x.orderitems.append(orderitems(partname="GHI" , qty=3.3 , duedate="03/01/2022"))
         
-        Config(                 # Using this configuration
-            env="wlnd" ,            # the Priority environment
-            path=os.getcwd()        # the location of the config file
-        ) , 
+        # Output as json
+        print(x.toJSON())
 
-        q.toFlatOdata ,         # Method to generate oData Commands
-                                    # toFlatOdata - send to oData load form
-                                    # toOdata - send to nested Priority forms
-                                    # OR a custom method.
-        
-        response=Response       # the apy request/response object. Use:
-                                    # for command:      response=Response   (a new response is used)
-                                    # for apy usage:    request=request     (the request.response is used)
-    )
+        # Output as xml, with a root node for XML
+        print(x.toXML(root="top"))
+
+        #endregion
+
+    if False:
+        #region "Load Order from xml file"    
+        with open('test2.xml', 'r') as the_file:        
+            q = order(_xml=the_file)
+            # Save to json
+            q.toFile('test2.json', q.toJSON)
+
+        #endregion
     
-    # Display the result
-    print( "[{}]: {}".format( Response.Status , Response.Message ))
-    print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
+    if False:        
+        #region "Load Order from json file"    
+        with open('test.json', 'r') as the_file:        
+            q = order(_json=the_file)
+            # Save to xml
+            q.toFile('test2.xml', q.toXML, root="root")
+
+        #endregion
+
+    if True:
+        #region "Load object from SQL Procedure"
+        q = order(                              # Create an order object
+            _sql={                              # from SQL
+                "proc": "sys_Python",           # from this procedure
+                "config" : Config(              # And this configuration
+                    env="wlnd" ,                    # the Priority environment
+                    path=os.getcwd()                # the location of the config file
+                ) , 
+                "kwargs": {"ORDNAME" : "123"}    # With these paramaeters
+            }
+        )
+        q.toFile('sql.json', q.toJSON)
+        
+        #endregion
+
+    #endregion
+
+    #region "Output Method usage"
+
+    if True:
+        #region "Send to URL"
+
+        # Create an object to hold the result
+        Response = Response()
+
+        q.toURL(
+            "https://priority.ntsa.uk/odata/priority/{}/{}/{}".format("tabula.ini" , "wlnd" , "ZODA_TRANS"),
+            q.toFlatOdata,
+            user="apiuser",
+            passw= "123456",
+            response=Response       # the apy request/response object. Use:
+                                        # for command:      response=Response   (a new response is used)
+                                        # for apy usage:    request=request     (the request.response is used)            
+        )
+        # Display the result
+        print( "[{}]: {}".format( Response.Status , Response.Message ))
+        print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
+
+        #endregion
+  
+    if False:
+        #region "Send to oData"
+
+        # Create an object to hold the result
+        Response = Response()
+        
+        # Send to Priority
+        q.toPri(                    # Send this object to Priority
+            
+            Config(                 # Using this configuration
+                env="wlnd" ,            # the Priority environment
+                path=os.getcwd()        # the location of the config file
+            ) , 
+
+            q.toFlatOdata ,         # Method to generate oData Commands
+                                        # toFlatOdata - send to oData load form
+                                        # toOdata - send to nested Priority forms
+                                        # OR a custom method.
+            
+            response=Response       # the apy request/response object. Use:
+                                        # for command:      response=Response   (a new response is used)
+                                        # for apy usage:    request=request     (the request.response is used)
+        )
+        
+        # Display the result
+        print( "[{}]: {}".format( Response.Status , Response.Message ))
+        print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
+        
+        #endregion
+
+    if False:
+        #region "Send to SQL"
+        
+        Response = Response()
+        
+        # Send to Priority
+        q.toPriSQL(                    # Send this object to Priority
+            
+            Config(                 # Using this configuration
+                env="wlnd" ,            # the Priority environment
+                path=os.getcwd()        # the location of the config file
+            ) , 
+
+            q.toSQL ,               # Method to generate sql Commands
+                                        # toSQL - send to oData load form                                    
+                                        # OR a custom method.
+            
+            response=Response       # the apy request/response object. Use:
+                                        # for command:      response=Response   (a new response is used)
+                                        # for apy usage:    request=request     (the request.response is used)
+        )
+        
+        # Display the result
+        print( "[{}]: {}".format( Response.Status , Response.Message ))
+        print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
+
+        #endregion
 
     #endregion    
 

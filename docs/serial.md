@@ -7,6 +7,8 @@ This package extends the basic [property](https://docs.python.org/3/library/func
 
 See also: [Serial Methods](serialmethod.md "Serial Methods").
 
+See also: [Infering this class](infer.md "infer tool").
+
 ## Imports
 ```python
 from MedatechUK.Serial import SerialBase , SerialT , SerialF

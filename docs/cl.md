@@ -37,6 +37,15 @@ arg.args()[0] = "C:\SOMEFILE.TXT"
 arg.args()[1] = "SOME VALUE"
 ```
 
+### Positional file arguments
+(added 0.0.20)
+We can validate if a file passed as an argument exists with the argExists() method.
+```python
+if not arg.argExists(0):
+	raise NameError("File [{}] not found.".format(arg.args()[0]))
+	
+```
+
 ### Combining named and positional arguments
 ```
 progname.exe -arg1 "C:\SOMEFILE.TXT" "SOME VALUE"
