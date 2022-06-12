@@ -1,4 +1,4 @@
-# oDataConfig.py
+# [oDataConfig.py](../package/src/MedatechUK/oDataConfig.py "oDataConfig.py")
 
 This package returns a **Config Object** containing settings for Priority Odata.
 
