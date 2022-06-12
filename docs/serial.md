@@ -106,13 +106,16 @@ class order(SerialBase) :
 ...
 
     @property
-    def orderitems(self):    
+    def orderitems(self):
         return self._orderitems
     @orderitems.setter
-    def orderitems(self, value):        
-        self._orderitems = value
-        for i in range(len(self._orderitems)):
-            self._orderitems[i] = orderitems(**self._orderitems[i])
+    def orderitems(self, value):
+        self._orderitems = [] 
+        if isinstance(value, list):
+            for i in range(len(value)):
+                self._orderitems.append(orderitems(**value[i]))
+        else:
+            self._orderitems.append(orderitems(**value))
 ```
 
 ## Default property values 
