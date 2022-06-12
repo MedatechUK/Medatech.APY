@@ -1,0 +1,72 @@
+{
+    "acc": [
+        {
+            "id": "551d2281-5f34-4c3e-b7e9-9330c83556d8",
+            "dateAdded": "2021-09-24T19:15:34+00:00",
+            "dateModified": "2021-09-29T02:14:45+00:00",
+            "accountName": "Business Account",
+            "type": "cash:current",
+            "accountType": "business",
+            "accountReference": "3801",
+            "providerName": "Lloyds",
+            "providerId": "DEMO",
+            "providerReference": "demo",
+            "connectionId": "DEMO:666",
+            "balance": {
+                "amount": {
+                    "value": 10456552,
+                    "currency": "GBP"
+                },
+                "date": "2021-09-29"
+            },
+            "currency": "GBP",
+            "details": {
+                "AER": 0,
+                "overdraftLimit": 0
+            },
+            "transactionData": {
+                "count": 315,
+                "earliestDate": "2020-09-27",
+                "lastDate": "2021-09-27T00:00:00.000Z"
+            },
+            "trans": [
+                {
+                    "amount": {
+                        "value": 2387827,
+                        "currency": "GBP"
+                    },
+                    "accountId": "551d2281-5f34-4c3e-b7e9-9330c83556d8",
+                    "categoryId": "std:47d1b4b6-174e-4410-95f5-667dfe44be98",
+                    "categoryIdConfirmed": "False",
+                    "date": "2021-09-27T02:26:47",
+                    "dateModified": "2021-09-27T02:26:48.242Z",
+                    "id": "34a06b5b-cb95-4f9e-b2dd-b61b687e131f",
+                    "longDescription": "BAILEY BUILDING AND LOAN ASSOCIATION Bill Payment INVx5998 BBP",
+                    "notes": "",
+                    "shortDescription": "Bailey Building and Loan Association",
+                    "status": "posted",
+                    "counterpartyId": "ae19861000e6d7a292d6f0e47f46d68ea05034ab399b2798974d50e5d48fe905",
+                    "providerId": "a5499e09-854b-4883-a405-8a07136de591"
+                },
+                {
+                    "amount": {
+                        "value": 565702,
+                        "currency": "GBP"
+                    },
+                    "accountId": "551d2281-5f34-4c3e-b7e9-9330c83556d8",
+                    "categoryId": "std:47d1b4b6-174e-4410-95f5-667dfe44be98",
+                    "categoryIdConfirmed": "False",
+                    "date": "2021-09-27T02:26:47",
+                    "dateModified": "2021-09-27T02:26:48.276Z",
+                    "id": "f4ef0b79-7080-4e55-8e23-82df07e11684",
+                    "longDescription": "STARK INDUSTRIES Counter Credit x8292 BGC",
+                    "notes": "",
+                    "shortDescription": "Stark Industries",
+                    "status": "posted",
+                    "counterpartyId": "9b18a211193b1889ab9b5af51bc61bc3b507037dc46dfd1c88333de3424021fd",
+                    "providerId": "89860d4d-c622-4dab-b6df-b3c18cd459fe"
+                }
+            ]
+        }
+    ]
+}

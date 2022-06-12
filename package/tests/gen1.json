@@ -1,0 +1,66 @@
+{
+  "__VERSION__": "1-0-0",
+  "order_reference": "PO22000584",
+  "supplier": {
+     "relation_type": "supplier",
+     "reference": "CON50",
+     "company_name": "CONTRACT EMBROIDERY LTD",
+     "country_reference": "GB"
+  },
+  "order_lines": [
+     {
+        "line_reference": "1504875",
+        "product_reference": "ASLTI-NVY-7/8",
+        "packaging_reference": [],
+        "quantity": "12"
+     },
+     {
+        "line_reference": "1504876",
+        "product_reference": "ASLTI-NVY-9/10",
+        "packaging_reference": [],
+        "quantity": "25"
+     },
+     {
+        "line_reference": "1504877",
+        "product_reference": "ASLTI-NVY-L",
+        "packaging_reference": [],
+        "quantity": "6"
+     },
+     {
+        "line_reference": "1504878",
+        "product_reference": "ASLTI-NVY-M",
+        "packaging_reference": [],
+        "quantity": "10"
+     },
+     {
+        "line_reference": "1504879",
+        "product_reference": "ASLTI-NVY-S",
+        "packaging_reference": [],
+        "quantity": "15"
+     },
+     {
+        "line_reference": "1504880",
+        "product_reference": "ASLTI-NVY-XL",
+        "packaging_reference": [],
+        "quantity": "3"
+     },
+     {
+        "line_reference": "1504881",
+        "product_reference": "ASLTI-NVY-XS",
+        "packaging_reference": [],
+        "quantity": "8"
+     },
+     {
+        "line_reference": "1504882",
+        "product_reference": "ASLTI-NVY-XXS",
+        "packaging_reference": [],
+        "quantity": "10"
+     },
+     {
+        "line_reference": "1504883",
+        "product_reference": "ASLTI-NVY-2XL",
+        "packaging_reference": [],
+        "quantity": "3"
+     }
+  ]
+}
