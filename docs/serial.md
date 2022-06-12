@@ -256,122 +256,145 @@ This converts the data sent to priority from text to a valid date:
 
 ## Order Class Full code listing
 
+This code was created by the [Infer tool](infer.md "infer tool").
 ```python
+import json
+from MedatechUK.Serial import SerialBase , SerialT , SerialF
+from MedatechUK.mLog import mLog
+
 class order(SerialBase) :
 
     #region Properties
+    
     @property
-    def custname(self):    
-        return self._custname
+    def custname(self):
+       return self._custname 
     @custname.setter
     def custname(self, value):
-        self._custname = value
-
+       self._custname = value
+        
     @property
-    def ordname(self):    
-        return self._ordname
+    def ordname(self):
+       return self._ordname 
     @ordname.setter
     def ordname(self, value):
-        self._ordname = value
-
+       self._ordname = value
+        
     @property
-    def orderitems(self):    
+    def orderitems(self):
         return self._orderitems
     @orderitems.setter
-    def orderitems(self, value):        
-        self._orderitems = value
-        for i in range(len(self._orderitems)):
-            self._orderitems[i] = orderitems(**self._orderitems[i])
-
+    def orderitems(self, value):
+        self._orderitems = [] 
+        if isinstance(value, list):
+            for i in range(len(value)):
+                self._orderitems.append(orderitems(**value[i]))
+        else:
+            self._orderitems.append(orderitems(**value))
+    
     #endregion
 
     #region "ctor"
     def __init__(self,  **kwargs): 
-
+    
         #region "Property defaults"
-        self.custname = 0
+        self.custname = ""
         self.ordname = ""
-        self.orderitems = []  
-
-        #endregion  
-
+        self.orderitems = []
+    
+        #endregion
+    
         #region "Set Meta info"
         SerialBase.__init__(self , SerialF(fname="ZODA_TRANS", rt=1, typename="ORD"), **kwargs)  
         SerialT(self, "rt")
         SerialT(self, "bubbleid")
         SerialT(self, "typename")
-        SerialT(self, "custname" , pCol="TEXT1" , Len=20 , pType="CHAR")
-        SerialT(self, "ordname" , pCol="TEXT2" , Len=20 , pType="CHAR")
-
+        SerialT(self, "custname" , pCol="TEXT1" , Len=7 , pType="CHAR")
+        SerialT(self, "ordname" , pCol="TEXT2" , Len=10 , pType="CHAR")
+    
         #endregion
     
     #endregion
 
 class orderitems(SerialBase) :
 
-    #region properties
+    #region Properties
+    
     @property
-    def partname(self):    
-        return self._partname
+    def partname(self):
+       return self._partname 
     @partname.setter
     def partname(self, value):
-        self._partname = value
-                
+       self._partname = value
+        
     @property
-    def qty(self):    
-        return self._qty
+    def qty(self):
+       return self._qty 
     @qty.setter
     def qty(self, value):
-        self._qty = value
-                
+       self._qty = value
+        
     @property
-    def duedate(self):  
-        return self._duedate
-
+    def duedate(self):
+       return self._duedate 
     @duedate.setter
     def duedate(self, value):
-        self._duedate = value    
-
-    # Readonly calculated property
-    @property
-    def pridate(self):
-        try :
-            d = parse(self._duedate)    
-            return int(
-                (datetime(
-                    d.year, 
-                    d.month, 
-                    d.day, 
-                    d.hour, 
-                    d.minute) 
-                - datetime(1988, 1, 1)).total_seconds() / 60
-            )     
-        except:
-            return 0        
-
+       self._duedate = value
+    
     #endregion
 
     #region "ctor"
     def __init__(self,  **kwargs): 
-
+    
         #region "Property defaults"
-        self.partname = ''
-        self.qty=0
-        self.duedate = ''     
-        
+        self.partname = ""
+        self.qty = 0.0
+        self.duedate = ""
+    
         #endregion
-
+    
         #region "Set Meta info"
-        SerialBase.__init__(self , SerialF(fname="ORDERITEMS", rt=2) , **kwargs)   
+        SerialBase.__init__(self , SerialF(fname="ZODA_LOAD", rt=2), **kwargs)  
         SerialT(self, "rt")
-        SerialT(self, "partname" , pCol="TEXT1" , Len=10 , pType="CHAR")
+        SerialT(self, "partname" , pCol="TEXT1" , Len=3 , pType="CHAR")
         SerialT(self, "qty" , pCol="REAL1" , pType="REAL")
-        
-        # pridate is a readonly function that converts the dudate to a Priority integer
-        SerialT(self, "pridate" , pCol="INT2" , pType="INT")
-
+        SerialT(self, "duedate" , pCol="TEXT2" , Len=10 , pType="CHAR")
+    
         #endregion
     
     #endregion
 
+def ProcessRequest(request) :
+    log = mLog()
+    try:
+        q = order(**request.data) 
+        q.toPri(
+            Config(
+                env=request.environment , 
+                path=os.getcwd()
+            ) , 
+            q.toFlatOdata, 
+            request=request 
+        )        
+    
+    except Exception as e:
+        log.logger.critical(str(e))
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        request.response.Status = 500
+        request.response.Message = "Internal Server Error"
+        request.response.data ={ "error" :
+            {
+                "type": exc_type,
+                "message": str(e),
+                "script": fname,
+                "line": exc_tb.tb_lineno
+            }
+        } 
+
+if __name__ == '__main__':
+    with open("sql.json", "r") as the_file:
+        q = order(_json=the_file)
+        print(json.dumps(json.loads(q.toFlatOdata()),indent=4, sort_keys=False))
+		
 ```
