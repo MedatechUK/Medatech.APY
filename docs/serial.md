@@ -1,4 +1,4 @@
-# [serial.py](../package/src/MedatechUK/serial.py "serial.py")
+# [Serial.py](../package/src/MedatechUK/Serial.py "Serial.py")
 
 This package extends the basic [property](https://docs.python.org/3/library/functions.html?highlight=property#property "python property") function in Python for:
 - serialisation of objects
