@@ -171,8 +171,8 @@ if __name__ == '__main__':
 
     #endregion
 
-    #region "input Message Usage"
-    
+    #region "input Method Usage"
+
     if False:
         #region "Create an order"
         x = order( custname = 'CUST123' , ordname = 'ORD1112233' )

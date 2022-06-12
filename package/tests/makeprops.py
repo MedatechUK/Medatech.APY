@@ -29,15 +29,18 @@ if __name__ == '__main__':
 		Output.append("")					
 		Output.append("\n".join(inf.cls))				# Classes
 		Output.append("\n".join(inf.preq))				# Process request Method
+
 		Output.append("if __name__ == '__main__':")		# Main part
 		Output.append("    with open(\"{}\", \"r\") as the_file:".format(arg.args()[0]))
 		Output.append("        q = {}(_json=the_file)".format(arg.byName(["name"])))
-		Output.append("        print(json.dumps(json.loads(q.toFlatOdata()),indent=4, sort_keys=False))")
-
-	print("\n".join(Output))
+		Output.append("        print(json.dumps(json.loads(q.toFlatOdata()),indent=4, sort_keys=False))")	
 
 	if len(arg.args()) > 1:
-		
+
 		# Output to file
 		with open(arg.args()[1], 'w') as out_file: 
 			out_file.write("\n".join(Output))
+
+	else:
+		# Output to screen
+		print("\n".join(Output))

@@ -796,7 +796,7 @@ class SerialBase :
         verb = "POST"
         if kwargs.__contains__("method"):
             verb = kwargs("method")
-            
+
         host = url.split("://")[1].split("/")[0]
         url = url.split(host)[1]
 
@@ -1015,9 +1015,12 @@ class infer():
 
     #region Methods    
     def isINT(self,Value):
-        return not re.fullmatch("[0-9]+", str(Value)) == None
+        if isinstance(Value,int):
+            return True
+        else:
+            return not re.fullmatch("[0-9]+", str(Value)) == None
 
-    def isREAL(self,Value):
+    def isREAL(self,Value):        
         return not re.fullmatch("[0-9]+\.[0-9]+", str(Value)) == None
 
     def rowType(self,NewValue, OldType=None):	
@@ -1060,20 +1063,22 @@ class infer():
                         self.recurse(l, k)
                 
                 elif hasattr(data[k], "keys"):
+                    if not name in list(self.mycls.keys()):
+                        self.mycls[name] = {}		
+                        self.mylen[name] = {}
                     self.mycls[name][k] = "$"
+
                     if not k in list(self.mycls.keys()):
                         self.mycls[k] = {}		
-                        self.mylen[k] = {}						
+                        self.mylen[k] = {}		
+
                     for i in data[k].keys():
-                        self.mycls[k][i] = self.rowType(data[k][i])
-                        self.mylen[k][i] = len(data[k][i])
-                        if not i in list(self.mycls[k]):
-                            self.mycls[k][i] = self.rowType(data[k][i])
-                            self.mylen[k][i] = len(data[k][i])
-                        else:
-                            self.mycls[k][i] = self.rowType(data[k][i] , self.mycls[k][i])
-                            if len(data[k][i]) > self.mylen[k][i]:
-                                self.mylen[k][i] = len(data[k][i])
+                        if hasattr(data[k][i], "keys"):
+                            self.mycls[k][i] = "$"
+                            self.recurse(data[k][i], i)
+                        else:    
+                            self.mycls[k][i] = self.rowType(data[k][i])                        
+                            self.mylen[k][i] = len(str(data[k][i]))
 
                 else:
                     if not name in list(self.mycls.keys()):
