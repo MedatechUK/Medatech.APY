@@ -33,7 +33,7 @@ with open('{FILENAME}', 'r') as the_file:
 |---------------|---------------------------------------|
 |FILENAME| The name of the file to load|
 |OBJECT| The object that will load the data|
-|SERIALTYPE| _json OR _xml OR _xml|
+|SERIALTYPE| _json OR _xml OR _sql|
 
 ### Load from XML, save as JSON
 ```python      
@@ -70,8 +70,8 @@ with open('{FILENAME}', 'r') as the_file:
 
     q.toURL(
         "https://priority.ntsa.uk/odata/priority/{}/{}/{}".format("tabula.ini" , "wlnd" , "ZODA_TRANS"),
-        q.toFlatOdata,
-        user="apiuser",
+        q.toFlatOdata,			# The method that generates the payload
+        user="apiuser",	
         passw= "123456",
         response=Response       # the apy request/response object. Use:
                                     # for command:      response=Response   (a new response is used)
