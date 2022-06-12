@@ -33,7 +33,7 @@ with open('{FILENAME}', 'r') as the_file:
 |---------------|---------------------------------------|
 |FILENAME| The name of the file to load|
 |OBJECT| The object that will load the data|
-|SERIALTYPE| _json OR _xml|
+|SERIALTYPE| _json OR _xml OR _xml|
 
 ### Load from XML, save as JSON
 ```python      
@@ -49,6 +49,37 @@ with open('{FILENAME}', 'r') as the_file:
         q = order(_json=the_file)
         # Save to xml
         q.toFile('test2.xml', q.toXML, root="root")
+
+```
+
+### Load from SQL, save to URL
+```python    
+    q = order(                              # Create an order object
+        _sql={                              # from SQL
+            "proc": "sys_Python",           # from this procedure
+            "config" : Config(              # And this configuration
+                env="wlnd" ,                    # the Priority environment
+                path=os.getcwd()                # the location of the config file
+            ) , 
+            "kwargs": {"ORDNAME" : "123"}    # With these paramaeters
+        }
+    )
+
+    # Create an object to hold the result
+    Response = Response()
+
+    q.toURL(
+        "https://priority.ntsa.uk/odata/priority/{}/{}/{}".format("tabula.ini" , "wlnd" , "ZODA_TRANS"),
+        q.toFlatOdata,
+        user="apiuser",
+        passw= "123456",
+        response=Response       # the apy request/response object. Use:
+                                    # for command:      response=Response   (a new response is used)
+                                    # for apy usage:    request=request     (the request.response is used)            
+    )
+    # Display the result
+    print( "[{}]: {}".format( Response.Status , Response.Message ))
+    print( "response : " + json.dumps(Response.data, sort_keys=False, indent=4 ))
 
 ```
 
