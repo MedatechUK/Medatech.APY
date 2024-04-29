@@ -47,19 +47,20 @@ Note that the port specified in the launcher.json must match the port specified 
 ### self.log
 Returns a [Logging Class](https://github.com/MedatechUK/Medatech.APY/blob/main/docs/log.md "Logging Class") created in the self.Folder location.
 ```python
-self.log.logger.debug("Log this message.")
+self.log.logger.debug("Log this message.")  ## Log Message.
 ```
 
 ### self.clArg
 Returns [Command Line Arguments](https://github.com/MedatechUK/Medatech.APY/blob/main/docs/cl.md "Command Line Arguments") from the service start.
 ```python
-self.clArg.byName(['env','e']) ## = the value of -e or -env
+self.clArg.byName(['env','e']) ## Returns the value of -e or -env
 ```
 
 ### self.oDataConfig
 Returns a [Config Class](https://github.com/MedatechUK/Medatech.APY/blob/main/docs/oDataConfig.md "Config Class") of oData settings from the settings.ini file
 ```python
-self.svc.oDataConfig ## returns the oData configuration from settings.ini, using config['odata']['env'] as the environment.
+self.svc.oDataConfig ## returns the oData configuration from settings.ini, 
+                     ## using config['odata']['env'] as the environment.
 ```
 
 ### self.Config
