@@ -70,11 +70,12 @@ self.config.debug.verbosity  ## The verbosity value from ['debug']['VERBOSITY']
 ```
 
 Note that the service itself uses the settings.ini, and -if missing- the file will be created in the working directory with the following defaults.
-```python
-config['debug']['VERBOSITY'] = 'DEBUG' ## Debugging level
-config['debug']['PORT'] = '5678'       ## Debug port
-config['debug']['FORCE'] = 'ON'        ## Force the service to be in debug mode
-```
+
+| Property      |Description                            | Default      |
+|---------------|---------------------------------------|--------------|
+| ['debug']['VERBOSITY']        | Debugging level  | DEBUG |
+| ['debug']['PORT'] 	| Debug port | 5678  |
+| ['debug']['FORCE'] | Force the service to be in debug mode | ON |
 
 ## Example
 ```python
