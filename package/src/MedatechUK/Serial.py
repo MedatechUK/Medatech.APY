@@ -449,20 +449,21 @@ class SerialBase :
             ret.Message = "POST Failed: " + res.reason   
             self.log.logger.critical( "[{}] Fail: {}".format( res.status , res.reason ) )            
 
-            # If the response is text, create a response with the text         
-            if res.getheader("Content-Type","").find("text/plain") > -1:                             
-                er = str(res.read().decode('utf-8'))
-                ret.data = {"error": er }     
-                self.log.logger.critical("{}".format( er ))              
+            if len(ret.data)!=0:
+                # If the response is text, create a response with the text         
+                if res.getheader("Content-Type","").find("text/plain") > -1:                             
+                    er = str(res.read().decode('utf-8'))
+                    ret.data = {"error": er }     
+                    self.log.logger.critical("{}".format( er ))              
 
-            elif res.getheader("Content-Type","").find("text/html") > -1:
-                    ret.data = {"error": "Priority service not responding." }     
-                    self.log.logger.critical("{}".format( "Priority service not responding." ))   
+                elif res.getheader("Content-Type","").find("text/html") > -1:
+                        ret.data = {"error": "Priority service not responding." }     
+                        self.log.logger.critical("{}".format( "Priority service not responding." ))   
 
-            else:
-                # Create reponse from json 
-                ret.data = json.load(res)  
-                self.log.logger.critical( "{}".format( json.dumps(ret.data  , indent = 4 ) ) )
+                elif res.getheader("Content-Type","").find("json") > -1:
+                    # Create reponse from json 
+                    ret.data = json.load(res)  
+                    self.log.logger.critical( "{}".format( json.dumps(ret.data  , indent = 4 ) ) )
     
     #region "Built in toPri() oData methods"
 
@@ -835,20 +836,21 @@ class SerialBase :
             ret.Message = "POST Failed: " + res.reason   
             self.log.logger.critical( "[{}] Fail: {}".format( res.status , res.reason ) )            
 
-            # If the response is text, create a response with the text         
-            if res.getheader("Content-Type","").find("text/plain") > -1:                             
-                er = str(res.read().decode('utf-8'))
-                ret.data = {"error": er }     
-                self.log.logger.critical("{}".format( er ))              
+            if len(ret.data)!=0:
+                # If the response is text, create a response with the text         
+                if res.getheader("Content-Type","").find("text/plain") > -1:                             
+                    er = str(res.read().decode('utf-8'))
+                    ret.data = {"error": er }     
+                    self.log.logger.critical("{}".format( er ))              
 
-            elif res.getheader("Content-Type","").find("text/html") > -1:
-                    ret.data = {"error": "Priority service not responding." }     
-                    self.log.logger.critical("{}".format( "Priority service not responding." ))   
+                elif res.getheader("Content-Type","").find("text/html") > -1:
+                        ret.data = {"error": "Priority service not responding." }     
+                        self.log.logger.critical("{}".format( "Priority service not responding." ))   
 
-            else:
-                # Create reponse from json 
-                ret.data = json.load(res)  
-                self.log.logger.critical( "{}".format( json.dumps(ret.data  , indent = 4 ) ) )
+                elif res.getheader("Content-Type","").find("json") > -1:
+                    # Create reponse from json 
+                    ret.data = json.load(res)  
+                    self.log.logger.critical( "{}".format( json.dumps(ret.data  , indent = 4 ) ) )
     
     #endregion
 

@@ -28,6 +28,7 @@ from datetime import datetime
 import os
 from os.path import exists
 import shutil
+from pathlib import Path
 
 class mLog():
 
@@ -41,9 +42,9 @@ class mLog():
         tree.append(os.path.basename(filename.filename))
 
         previous_frame = previous_frame.f_back        
-        while previous_frame and os.path.basename(filename.filename)!='runpy.py':
+        while previous_frame and 'runpy.py' not in os.path.basename(filename.filename) and 'win32serviceutil.py' not in os.path.basename(filename.filename):
             (filename) = inspect.getframeinfo(previous_frame)        
-            if os.path.basename(filename.filename) != tree[-1] and os.path.basename(filename.filename)!='runpy.py':
+            if os.path.basename(filename.filename) != tree[-1] and 'runpy.py' not in os.path.basename(filename.filename) and 'win32serviceutil.py' not in os.path.basename(filename.filename):
                 tree.append(os.path.basename(filename.filename))
             previous_frame = previous_frame.f_back
         

@@ -31,7 +31,7 @@ class clArg():
             self._a.append(last)
 
         for k in self._kw:
-            log.logger.debug("Key: [{}] = {}".format(k , self._kw[k]))
+            log.logger.debug("Key: [{}] = {}".format(k.lower() , self._kw[k]))
         for a in self._a:
             log.logger.debug("Arg [{}]".format( a ) )
 
