@@ -40,7 +40,8 @@ To connect the debug, add the following configuration to your .vscode/lauunch.js
           }
 ```
 
-Note that the port specified in the launcher.json must match the port specified in the settings.ini of your service. This defaults to 5678, but may be changed.
+Note that the port specified in the launcher.json must match the port specified in the settings.ini of your service. 
+This defaults to 5678, but may be changed.
 
 ## Objects exposed by the Service
 
@@ -71,11 +72,18 @@ self.config.debug.verbosity  ## The verbosity value from ['debug']['VERBOSITY']
 
 Note that the service itself uses the settings.ini, and -if missing- the file will be created in the working directory with the following defaults.
 
-| Property      |Description                            | Default      |
-|---------------|---------------------------------------|--------------|
-| ['debug']['VERBOSITY']        | Debugging level  | DEBUG |
-| ['debug']['PORT'] 	| Debug port | 5678  |
-| ['debug']['FORCE'] | Force the service to be in debug mode | ON |
+| INI   | Property      |Description                     | Default      |
+|--------|--------------|--------------------------------|--------------|
+| debug  |VERBOSITY     | Debugging level  | DEBUG |
+|        |PORT 	        | Debug port | 5678  |
+|        |FORCE         | Force the service to be in debug mode | ON |
+| odata  |oDataHost     | The URL of the priority Service  | priority.localhost |
+|        |tabulaini     | The tabula config to use  | tabula.ini |
+|        |ouser         | The API user for oData | apiuser |
+|        |opass         | The users password for oData | password |
+|        |ENV           | The priority environment  | demo |
+| db     |server        | SQL database and instance name  | localhost\PRI |
+|        |credentials   | SQL credentials  | Trusted_Connection=Yes |
 
 ## Example
 ```python
