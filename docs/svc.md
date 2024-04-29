@@ -70,8 +70,7 @@ Read a property from the Settings.ini.
 self.config.debug.verbosity  ## The verbosity value from ['debug']['VERBOSITY'] 
 ```
 
-Note that the service itself uses the settings.ini, and -if missing- the file will be created on serice start in the current working directory, with the following defaults.
-
+Note that the service itself uses the settings.ini, and -if missing- the file will be created on serice start in the current working directory, with the following defaults:
 | INI   | Property      |Description                     | Default      |
 |--------|--------------|--------------------------------|--------------|
 | debug  |VERBOSITY     | Debugging level  | DEBUG |
@@ -84,6 +83,8 @@ Note that the service itself uses the settings.ini, and -if missing- the file wi
 |        |ENV           | The priority environment  | demo |
 | db     |server        | SQL database and instance name  | localhost\PRI |
 |        |credentials   | SQL credentials  | Trusted_Connection=Yes |
+
+Note that the default debug.force value is ON. This means that by default the service run in debug mode even without the -debug option. Only set this to OFF after testing is complete.
 
 ## Example Service
 ```python
