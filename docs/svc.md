@@ -70,7 +70,7 @@ Read a property from the Settings.ini.
 self.config.debug.verbosity  ## The verbosity value from ['debug']['VERBOSITY'] 
 ```
 
-Note that the service itself uses the settings.ini, and -if missing- the file will be created in the working directory with the following defaults.
+Note that the service itself uses the settings.ini, and -if missing- the file will be created on serice start in the current working directory, with the following defaults.
 
 | INI   | Property      |Description                     | Default      |
 |--------|--------------|--------------------------------|--------------|
@@ -85,7 +85,7 @@ Note that the service itself uses the settings.ini, and -if missing- the file wi
 | db     |server        | SQL database and instance name  | localhost\PRI |
 |        |credentials   | SQL credentials  | Trusted_Connection=Yes |
 
-## Example
+## Example Service
 ```python
 class MySVC(AppSvc):    
     _svc_name_ = "testSVC"
@@ -99,7 +99,12 @@ class MySVC(AppSvc):
 
     def init(self):
         if self.debuginit: debugpy.breakpoint() # -debug init
+        
         ## Do servce setup
+        self.log.logger.info("Log data from setting.ini like [{}] and [{}].".format( 
+            self.config.file.suffix
+            , self.config.file.path
+        ))         
 
     def main(self):       
         if self.debug: debugpy.breakpoint # -debug          
