@@ -20,9 +20,8 @@ import importlib
 import urllib.parse as urlparse
 import xmltodict , dicttoxml
 import pyodbc
-from MedatechUK.oDataConfig import Config
-import MedatechUK.apy
-from MedatechUK.mLog import mLog
+from MedatechUK.APY.oDataConfig import Config
+from MedatechUK.APY.mLog import mLog
 import inspect
 from datetime import datetime
 

@@ -20,7 +20,7 @@ import inspect
 import pyodbc
 import configparser
 
-from MedatechUK.mLog import mLog
+from MedatechUK.APY.mLog import mLog
 
 class AttrDict(dict):
     def __init__(self, *args, **kwargs):

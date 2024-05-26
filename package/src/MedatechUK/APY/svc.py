@@ -4,9 +4,9 @@ from pathlib import Path
 import win32serviceutil , win32service , win32event, servicemanager
 import configparser , debugpy
 
-from MedatechUK.mLog import mLog
-from MedatechUK.cl import clArg
-from MedatechUK.oDataConfig import Config
+from MedatechUK.APY.mLog import mLog
+from MedatechUK.APY.cl import clArg
+from MedatechUK.APY.oDataConfig import Config
 
 class AttrDict(dict):
     def __init__(self, *args, **kwargs):

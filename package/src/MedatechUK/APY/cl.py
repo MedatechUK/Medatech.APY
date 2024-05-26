@@ -1,5 +1,5 @@
 import sys
-from MedatechUK.mLog import mLog
+from MedatechUK.APY.mLog import mLog
 import os
 from os import listdir
 from os.path import exists, isfile, join

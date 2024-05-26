@@ -39,9 +39,9 @@ from http.client import HTTPSConnection
 from base64 import b64encode
 import inspect
 
-from MedatechUK.mLog import mLog
-from MedatechUK.oDataConfig import Config
-import MedatechUK.PriDate
+from MedatechUK.APY.mLog import mLog
+from MedatechUK.APY.oDataConfig import Config
+import MedatechUK.APY.PriDate
 
 class oRecord:
     ## Ctor
