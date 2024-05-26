@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
 	try:        
 		if len(arg.args()) == 0:
-			raise NameError("Please specify a filename.".format(arg.args()[0]))
+			raise NameError("Please specify a filename.")
 		if not arg.argExists(0):
 			raise NameError("File [{}] not found.".format(arg.args()[0]))
 		if arg.byName(["name"])==None:
@@ -25,6 +25,9 @@ if __name__ == '__main__':
 	with open(arg.args()[0], 'r') as the_file: 		
 		inf = infer(json.loads(the_file.read()) , name=arg.byName(["name"]))
 		
+		inf.imp.append("from MedatechUK.mLog import mLog")
+		inf.imp.append("from MedatechUK.oDataConfig import Config")
+
 		Output.append("\n".join(inf.imp)) 				# Imports
 		Output.append("")					
 		Output.append("\n".join(inf.cls))				# Classes
